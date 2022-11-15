@@ -2,4 +2,5 @@
 pip install -r requirments.txt
 cd chessschedule/static
 npm install
-cd 
+cd ../..
+python -m chessschedule
