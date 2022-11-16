@@ -3,8 +3,8 @@ from flask_socketio import emit
 
 @skt.on('connect')
 def connect(data):
-    emit('my response', {'data': 'Connected'})
+    emit('my response', {'dawdoiwahdiaow': 'Connected', "akey" : 12})
 
-@skt.on('who won')
+@skt.on('my event')
 def msg(data):
-    emit('wow cool msg', {'status' : "wow"})
+    emit('wow', {"nicemsg" : data["msg"]})
