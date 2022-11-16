@@ -3,6 +3,7 @@ from flask_socketio import emit, send
 from flask_socketio import join_room, leave_room
 from typing import List
 from ..models.room import Room
+from uuid import uuid1
 
 """
 emit() has a kwarg called broadcast, which dictates sending to all users connected to the socket vs sending to just the
@@ -23,26 +24,26 @@ def get_room_uuid(uuid:str):
 
 @skt.on('connect')
 def connect(data):
-    selected_room = get_room_code(data["code"]) or None
-    if not selected_room: return # TODO some error to user
-    join_room(selected_room.uuid)
     # TODO emit needed information
     emit('connect_res', {'Status': 'Connected', "akey" : 12}, broadcast=False)
 
-
-@skt.on('my event')
-def msg(data):
-    emit('wow', {"nicemsg": data["msg"]})
+@skt.on("join_room")
+def join_room(data):
+    selected_room = get_room_code(data["code"]) or None
+    if not selected_room: return # TODO some error to user
+    join_room(selected_room.uuid)
+    emit()
 
 # maintain a list of active rooms
 rooms: List[Room] = list()
 
 @skt.on("create_room")
 def create(data):
-    room = Room(data[user_uuid])
+    admin_uuid = uuid1()
+    room = Room(admin_uuid)
     rooms.append(room)
     # TODO emit needed information
-    emit("response", {"user":"TODO", "room":room.uuid}, broadcast=False)
+    emit("create_room_res", {"user":admin_uuid, "room":room.uuid,"room_code":room.room_code}, broadcast=False)
 
 @skt.on("delete_room")
 def delete_room(data):

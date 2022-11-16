@@ -1,7 +1,7 @@
 class Player:
-    def __init__(self, name: str, uid: str) -> None:
+    def __init__(self, name: str, uuid: str) -> None:
         self.name = name
-        self.uid = uid
+        self.uuid = uuid
         self.rating = 1000
         self.wins = 0
         self.losses = 0
