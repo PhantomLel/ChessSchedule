@@ -3,6 +3,7 @@ from flask_socketio import emit, send
 from flask_socketio import join_room, leave_room
 from typing import List
 from ..models.room import Room
+from ..models.player import Player
 from uuid import uuid1
 from flask import jsonify, request
 
@@ -28,13 +29,20 @@ def connect(data):
     # TODO emit needed information
     emit('connect_res', {'Status': 'Connected', "akey" : 12}, broadcast=False)
 
-# TODO send player info when new players join - to update on the screen
 @skt.on("join_room")
 def join_room(data):
     selected_room = get_room_code(data["code"]) or None
-    if not selected_room: return # TODO some error to user
+    if not selected_room:
+        emit("join_room_res_failed", {"error_message":"The room code provided does not exist"}, broadcast=False)
+    
+    # associate request SID with a socket "room"
     join_room(selected_room.uuid)
-    emit()
+    
+    player = Player()
+    # associate player information with chessScheduel game
+    selected_room.add_player(player)
+    emit("join_room_res", {"user_uuid":player.uuid}, broadcast=False)
+    player_list_update(selected_room)
 
 # maintain a list of active rooms
 rooms: List[Room] = list()
