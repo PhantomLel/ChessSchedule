@@ -10,13 +10,13 @@ emit() has a kwarg called broadcast, which dictates sending to all users connect
 requester. the default for emit is broadcast = True
 """
 
-def get_room_code(code:str):
+def get_room_code(code:str) -> Room:
     for room in rooms:
         if room.code == code:
             return room
     return None
 
-def get_room_uuid(uuid:str):
+def get_room_uuid(uuid:str) -> Room:
     for room in rooms:
         if room.uuid == uuid:
             return room
@@ -55,3 +55,7 @@ def delete_room(data):
     if data["user_uuid"] == room.admin_uuid:
         # tell all clients to leave the room
         emit("delete_room_res", 'Room closed by admin', to=room.uuid)
+
+@skt.on("check_name")
+def check_name(data):
+    emit("check_name_res", get_room_uuid(data["room_uuid"]).name_is_taken(data["name"]),broadcast=False)
