@@ -4,6 +4,7 @@ function socketManager() {
     socket: null,
     roomUUID: null, // either will be undefined or the actaul uuid's
     userUUID: null,
+    hostUUID: null,
     roomCode: null,
     init() {
       this.parent = this;
@@ -11,6 +12,17 @@ function socketManager() {
       this.roomUUID = localStorage.getItem("roomUUID");
       this.userUUID = localStorage.getItem("userUUID");
       this.roomCode = localStorage.getItem("roomCode");
+      this.hostUUID = localStorage.getItem("hostUUID");
+      // if uuids change, save them to localstorage
+      this.$watch("roomUUID, userUUID, roomCode, hostUUID", () =>
+        this.saveUUIDs()
+      );
+    },
+    saveUUIDs() {
+      localStorage.setItem("roomUUID", this.roomUUID);
+      localStorage.setItem("hostUUID", this.hostUUID);
+      localStorage.setItem("roomCode", this.roomCode);
+      localStorage.setItem("userUUID", this.userUUID);
     },
     socketBuilder() {
       this.socket = io();
@@ -19,7 +31,7 @@ function socketManager() {
       });
       this.socket.on("create_room_res", (data) => {
         localStorage.setItem("roomUUID", data.room_uuid);
-        localStorage.setItem("userUUID", data.user_uuid);
+        localStorage.setItem("hostUUID", data.user_uuid);
         localStorage.setItem("roomCode", data.room_code);
         this.roomUUID = data.room_uuid;
         this.userUUID = data.user_uuid;
@@ -31,4 +43,64 @@ function socketManager() {
     },
     reconnect() {},
   };
+}
+
+const joinRoomHandler = (socket, parent) => ({
+  code: "", // stores temp code
+  name: "", // temp name
+  validName: false,
+  error: "",
+  joinedRoom: false,
+  init() {
+    socket.on("check_room_res", (data) => {
+      // room does not exist
+      if (data.error) {
+        this.error = data.error;
+        return;
+      }
+      parent.roomUUID = data.room_uuid;
+      // switch to name input
+      this.error = "";
+      this.joinedRoom = true;
+    });
+
+    socket.on("check_name_res", (data) => {
+      if (!data.valid) {
+        this.error = "Name Invalid or Taken";
+      } else {
+        this.error = "";
+      }
+      this.validName = data.valid;
+    });
+
+    socket.on("join_room_res", (data) => {
+      if (!data.error) {
+        parent.userUUID = data.user_uuid;
+        // go to /game as we have successfully connected to a room
+        this.$router.push("/game");
+      }
+      console.error("something has went terribly wrong ");
+    });
+  },
+  joinRoom() {
+    socket.emit("join_room", {
+      name: this.name,
+      code: this.code
+    });
+  },
+  checkCode() {
+    if (this.code.length != 7) {
+      this.error = "Code must be 7 digits long";
+      return;
+    }
+    socket.emit("check_room", { code: this.code });
+  },
+  checkName() {
+    socket.emit("check_name", { name: this.name, room_uuid: parent.roomUUID });
+  },
+});
+
+const gameHandler = (socket, parent) => {
+  {
+  }
 };

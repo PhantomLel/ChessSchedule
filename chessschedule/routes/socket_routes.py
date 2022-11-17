@@ -5,7 +5,8 @@ from typing import List
 from ..models.room import Room
 from ..models.player import Player
 from uuid import uuid1
-from flask import jsonify, request
+from flask import request
+import json
 
 """
 emit() has a kwarg called broadcast, which dictates sending to all users connected to the socket vs sending to just the
@@ -14,7 +15,7 @@ requester. the default for emit is broadcast = True
 
 def get_room_code(code:str) -> Room:
     for room in rooms:
-        if room.code == code:
+        if room.room_code == code:
             return room
     return None
 
@@ -24,29 +25,33 @@ def get_room_uuid(uuid:str) -> Room:
             return room
     return None
 
+def player_list_update(room:Room) -> None:
+    data = json.dumps({"players":[vars(player) for player in room.players]})
+    emit("player_list_update", data, room=room.admin_sid)
+
 @skt.on('connect')
 def connect(data): 
     emit('connect_res', {'Status': 'Connected'}, broadcast=False)
 
 @skt.on("check_room")
 def check_room(data):
-    if get_room_code(data[code]) != None:
-        output = {"room_uuid":get_room_code(data[code]).uuid}
+    if get_room_code(data["code"]) != None:
+        output = {"room_uuid":get_room_code(data["code"]).uuid}
     else:
         output = {"error":"No room with the provided code exists"}
         
     emit("check_room_res", output, broadcast=False)
 
 @skt.on("join_room")
-def join_room(data):
-    selected_room = get_room_code(data["code"]) or None
-    if not selected_room:
+def join_comp(data):
+    selected_room = get_room_code(data["code"])
+    if selected_room is None:
         emit("join_room_res", {"error":"No room with the provided code exists"}, broadcast=False)
     
     # associate request SID with a socket "room"
     join_room(selected_room.uuid)
     
-    player = Player()
+    player = Player(data["name"])
     # associate player information with chessScheduel game
     selected_room.add_player(player)
     emit("join_room_res", {"user_uuid":player.uuid}, broadcast=False)
@@ -78,7 +83,3 @@ def delete_room(data):
 @skt.on("check_name")
 def check_name(data):
     emit("check_name_res", {"valid":get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},broadcast=False)
-
-def player_list_update(room:Room) -> None:
-    data = jsonify({"players":[vars(player) for player in room.players]})
-    emit("player_list_update", data, room=room.admin_sid)

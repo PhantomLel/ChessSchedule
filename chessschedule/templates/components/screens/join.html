@@ -1,5 +1,49 @@
-<section class="hero is-fullheight">
-    <div class="hero-body has-text-centered">
-        <input class="input is medium" placeholder="1234567">
+<section
+  x-data="joinRoomHandler(parent.socket, parent)"
+  class="hero is-fullheight has-text-centered"
+>
+  <div class="hero-body">
+    <div class="container">
+      <div x-show="!joinedRoom">
+        <p class="block is-size-2">Enter Join Code</p>
+        <div class="join-input block">
+          <input
+            x-model="code"
+            x-mask="9999999"
+            class="input is-large"
+            placeholder="1234567"
+            maxlength="7"
+            required
+          />
+        </div>
+
+        <div x-text="error" class="error-msg"></div>
+
+        <div class="block">
+          <button
+            @click="checkCode()"
+            :disabled="code.length != 7"
+            class="mt-4 button is-primary is-large"
+          >
+            Join Competition
+          </button>
+        </div>
+      </div>
+      <div x-show="joinedRoom">
+        <p class="block is-size-2">Enter A NickName</p>
+        <div class="join-input block">
+          <input @input.debounce.250ms="checkName()" x-model="name" class="input is-large" placeholder="Jason Quang" />
+        </div>
+
+        <!-- error variable is reused for both forms -->
+        <div x-text="error" class="error-msg"></div>
+
+        <div class="block">
+          <button @click="joinRoom()" :disabled="name.length < 3 && !validName" class="mt-4 button is-primary is-large">
+            Join
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </section>

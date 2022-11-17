@@ -13,9 +13,9 @@ class Room:
         self.players: List[Player] = list()
         self.player_names = set()
     
-    def add_player(player:Player) -> None:
+    def add_player(self, player:Player) -> None:
         self.players.append(player)
     
-    def name_is_taken(name:str) -> bool:
+    def name_is_taken(self, name:str) -> bool:
         self.player_names.add(name)
         return name in self.player_names

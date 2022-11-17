@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chess Tournament Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <!-- alpine mask extension -->
+    <script defer src="https://unpkg.com/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
     <!-- alpine router extention -->
     <script src="https://unpkg.com/@shaun/alpinejs-router@1.x.x/dist/cdn.min.js" defer></script>
     <!-- alpine js -->
@@ -25,6 +27,9 @@
     </template>
     <template x-route="/create">
         {% include 'components/screens/create.html' %}
+    </template>
+    <template x-route="/game">
+        {% include 'components/screens/game.html' %}
     </template>
 
     <script src="/static/index.js"></script>
