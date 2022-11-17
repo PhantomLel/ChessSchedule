@@ -58,4 +58,4 @@ def delete_room(data):
 
 @skt.on("check_name")
 def check_name(data):
-    emit("check_name_res", get_room_uuid(data["room_uuid"]).name_is_taken(data["name"]),broadcast=False)
+    emit("check_name_res", {"valid":get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},broadcast=False)
