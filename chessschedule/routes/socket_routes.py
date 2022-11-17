@@ -25,15 +25,18 @@ def get_room_uuid(uuid:str) -> Room:
     return None
 
 @skt.on('connect')
-def connect(data):
-    # TODO emit needed information
-    emit('connect_res', {'Status': 'Connected', "akey" : 12}, broadcast=False)
+def connect(data): 
+    emit('connect_res', {'Status': 'Connected'}, broadcast=False)
+
+@skt.on("check_room")
+def check_room(data):
+    emit("check_room_res", {"valid" : get_room_code(data["code"]) != None}, broadcast=False)
 
 @skt.on("join_room")
 def join_room(data):
     selected_room = get_room_code(data["code"]) or None
     if not selected_room:
-        emit("join_room_res_failed", {"error_message":"The room code provided does not exist"}, broadcast=False)
+        emit("join_room_res", {"error":"No room with the provided code exists"}, broadcast=False)
     
     # associate request SID with a socket "room"
     join_room(selected_room.uuid)
@@ -53,7 +56,6 @@ def create(data):
     admin_sid = request.sid
     room = Room(admin_uuid, admin_sid)
     rooms.append(room)
-    # TODO emit needed information
     emit("create_room_res", {"user":admin_uuid, "room":room.uuid,"room_code":room.room_code}, broadcast=False)
 
 @skt.on("delete_room")
@@ -61,11 +63,12 @@ def delete_room(data):
     selected_room = get_room_uuid(data["room_uuid"]) or None   
 
     if not selected_room:
-        return # TODO some error to user
-    
+        emit("delete_room_res", {"error" : "No room with provided UUID exists"}, broadcast=False)
+        return
+
     if data["user_uuid"] == room.admin_uuid:
         # tell all clients to leave the room
-        emit("delete_room_res", 'Room closed by admin', to=room.uuid)
+        emit("delete_room_res", {"message":'Room closed by admin'}, to=room.uuid)
 
 @skt.on("check_name")
 def check_name(data):
