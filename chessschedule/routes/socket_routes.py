@@ -30,7 +30,12 @@ def connect(data):
 
 @skt.on("check_room")
 def check_room(data):
-    emit("check_room_res", {"valid" : get_room_code(data["code"]) != None}, broadcast=False)
+    if get_room_code(data[code]) != None:
+        output = {"room_uuid":get_room_code(data[code]).uuid}
+    else:
+        output = {"error":"No room with the provided code exists"}
+        
+    emit("check_room_res", output, broadcast=False)
 
 @skt.on("join_room")
 def join_room(data):
