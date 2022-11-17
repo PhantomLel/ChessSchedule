@@ -1,5 +1,6 @@
-# Chess Tournement Manager
-This app is designed to provide a kahoot-like experience to simplify managing chess tournements
+# Chess Tournament Manager
+This app is designed to provide a kahoot-like experience to simplify managing chess tournaments
+Users connect to the web-app and provide basic information about themselves (name, experience-level, ect.) and the web apps makes pairings of players to play against each other. These pairings get better over time, as the system uses an elo system to make match-ups.
 # App structure
 ```
 run // executable to run program
