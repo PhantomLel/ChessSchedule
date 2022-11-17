@@ -1,5 +1,5 @@
 import uuid
-from ..elo import change_rating
+from ..algos.elo import change_rating
 
 WIN = (1,0)
 DRAW = (.5, .5)
@@ -15,7 +15,7 @@ class Player:
         self.draws = 0
         self.players_played = dict()
     
-    def game_result(result:str, opponent:Player) -> None:
+    def game_result(self, result:str, opponent) -> None:
         " Updates nessesary player information after a game is played, based on the result. "
         if result == "win":
             self.wins += 1
