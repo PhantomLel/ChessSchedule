@@ -45,6 +45,15 @@ function socketManager() {
   };
 }
 
+const hostRoomHandler = () => (
+  {
+    init() {
+      console.log("whdioawhdiwoa")
+      new Audio('static/assets/awesome_music.mp3').play();
+    }
+  }
+)
+
 const joinRoomHandler = (socket, parent) => ({
   code: "", // stores temp code
   name: "", // temp name

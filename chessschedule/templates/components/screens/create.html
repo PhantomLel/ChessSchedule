@@ -1,6 +1,10 @@
-<section class="hero is-fullheight">
-    <div class="is-size-2">Join Code: <span x-text="roomCode" style="background-color: antiquewhite;"></span></div>
-    <div class="hero-body has-text-centered">
-
-    </div>
+<section x-data="hostRoomHandler()" class="hero is-fullheight has-text-centered">
+  <div>
+    <h1 x-text="roomCode" class="join-code"></h1>
+  </div>
+  <br />
+  <span class="is-size-2">Join Code</span>
+    <hr />
+  <div class="hero-body has-text-centered">
+  </div>
 </section>

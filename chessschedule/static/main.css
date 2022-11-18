@@ -1,17 +1,29 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
 
+body {
+  background: #e2e1e0;
+}
 .join-input {
-    margin: 0 35%;
+  margin: 0 35%;
 }
 .join-input input {
-    text-align: center;
+  text-align: center;
 }
 @media screen and (max-width: 760px) {
-    .join-input {
-        margin: 0 15%;
-    }
+  .join-input {
+    margin: 0 15%;
+  }
 }
 
 .error-msg {
-    color: darkred;
+  color: darkred;
+}
+
+.join-code {
+  display: inline-block !important;
+  font-size: 5rem;
+  margin: 1rem;
+  padding: 0.5rem;
+  background-color: white;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
