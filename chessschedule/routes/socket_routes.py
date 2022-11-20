@@ -23,11 +23,12 @@ def get_room_uuid(uuid:str) -> Room:
     for room in rooms:
         if room.uuid == uuid:
             return room
-    return None
+    raise Exception(f"Unable to find room with value {uuid}")
 
 def player_list_update(room:Room) -> None:
-    data = json.dumps({"players":[vars(player) for player in room.players]})
-    emit("player_list_update", data, room=room.admin_sid)
+    data = {"players":[vars(player) for player in room.players]}
+    print(data)
+    emit("player_list_update", data, to=room.admin_sid)
 
 @skt.on('connect')
 def connect(data): 
@@ -57,6 +58,10 @@ def join_comp(data):
     emit("join_room_res", {"user_uuid":player.uuid}, broadcast=False)
     player_list_update(selected_room)
 
+@skt.on("get_all_players")
+def get_all_players(data):
+    player_list_update(get_room_uuid(data["room_uuid"]))
+
 # maintain a list of active rooms
 rooms: List[Room] = list()
 
@@ -66,7 +71,7 @@ def create(data):
     admin_sid = request.sid
     room = Room(admin_uuid, admin_sid)
     rooms.append(room)
-    emit("create_room_res", {"user":admin_uuid, "room":room.uuid,"room_code":room.room_code}, broadcast=False)
+    emit("create_room_res", {"user_uuid":admin_uuid, "room_uuid":room.uuid,"room_code":room.room_code}, broadcast=False)
 
 @skt.on("delete_room")
 def delete_room(data):
@@ -82,4 +87,5 @@ def delete_room(data):
 
 @skt.on("check_name")
 def check_name(data):
-    emit("check_name_res", {"valid":get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},broadcast=False)
+    """valid if name is not taken, and not valid if name is taken"""
+    emit("check_name_res", {"valid":not get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},broadcast=False)

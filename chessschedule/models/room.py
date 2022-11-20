@@ -14,8 +14,10 @@ class Room:
         self.player_names = set()
     
     def add_player(self, player:Player) -> None:
+        if player.name in self.player_names:
+            raise Exception(f"Player name already taken: " + player.name)
         self.players.append(player)
+        self.player_names.add(player.name)
     
     def name_is_taken(self, name:str) -> bool:
-        self.player_names.add(name)
         return name in self.player_names

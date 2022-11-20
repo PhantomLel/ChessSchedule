@@ -19,6 +19,7 @@ function socketManager() {
       );
     },
     saveUUIDs() {
+      // store in case user becomes disconnected
       localStorage.setItem("roomUUID", this.roomUUID);
       localStorage.setItem("hostUUID", this.hostUUID);
       localStorage.setItem("roomCode", this.roomCode);
@@ -30,12 +31,15 @@ function socketManager() {
         console.log("Connected");
       });
       this.socket.on("create_room_res", (data) => {
+        console.log(data);
         localStorage.setItem("roomUUID", data.room_uuid);
         localStorage.setItem("hostUUID", data.user_uuid);
         localStorage.setItem("roomCode", data.room_code);
         this.roomUUID = data.room_uuid;
         this.userUUID = data.user_uuid;
         this.roomCode = data.room_code;
+
+        this.$router.push("/create") // game has been created now we can load create screen
       });
     },
     createRoom() {
@@ -45,11 +49,24 @@ function socketManager() {
   };
 }
 
-const hostRoomHandler = () => (
+const createRoomHandler = (socket, parent) => (
   {
+    audio : new Audio('static/assets/awesome_music.mp3'),
+    players : [],
+    initialized : false,
     init() {
-      console.log("whdioawhdiwoa")
-      new Audio('static/assets/awesome_music.mp3').play();
+      console.log("create room handler")
+      socket.on("player_list_update", (data) => {
+        console.log(this.players);
+        this.players = data.players;
+      });
+      socket.emit("get_all_players", {
+        room_uuid : parent.roomUUID
+      }); // init players list
+      this.playMusic();
+    },
+    playMusic() {
+      this.audio.play();
     }
   }
 )

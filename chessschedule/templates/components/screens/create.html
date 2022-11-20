@@ -1,10 +1,23 @@
-<section x-data="hostRoomHandler()" class="hero is-fullheight has-text-centered">
-  <div>
-    <h1 x-text="roomCode" class="join-code"></h1>
+<section
+  x-data="createRoomHandler(socket, parent)"
+  x-init="$nextTick(() => init())"
+>
+  <div class="columns is-centered has-text-centered">
+    <div class="column">
+      <div>
+        <h1 x-text="roomCode" class="join-code"></h1>
+      </div>
+      <br />
+      <span class="is-size-2">Join Code</span>
+    </div>
   </div>
-  <br />
-  <span class="is-size-2">Join Code</span>
-    <hr />
-  <div class="hero-body has-text-centered">
+  <div class="columns is-multiline is-centered">
+    <template x-for="player in players">
+
+      <div>
+        <h1 x-text="player.name" class="player-tile"></h1>
+      </div>
+      </div>
+    </template>
   </div>
 </section>

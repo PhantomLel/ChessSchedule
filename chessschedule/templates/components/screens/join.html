@@ -39,7 +39,7 @@
         <div x-text="error" class="error-msg"></div>
 
         <div class="block">
-          <button @click="joinRoom()" :disabled="name.length < 3 && !validName" class="mt-4 button is-primary is-large">
+          <button @click="joinRoom()" :disabled="name.length < 3 || !validName" class="mt-4 button is-primary is-large">
             Join
           </button>
         </div>
