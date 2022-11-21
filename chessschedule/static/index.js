@@ -75,6 +75,7 @@ const createRoomHandler = (socket, parent) => (
 const joinRoomHandler = (socket, parent) => ({
   code: "", // stores temp code
   name: "", // temp name
+  skill: 0, // stores temp skill
   validName: false,
   error: "",
   joinedRoom: false,
@@ -112,7 +113,8 @@ const joinRoomHandler = (socket, parent) => ({
   joinRoom() {
     socket.emit("join_room", {
       name: this.name,
-      code: this.code
+      code: this.code,
+      skill: this.skill
     });
   },
   checkCode() {
@@ -125,6 +127,10 @@ const joinRoomHandler = (socket, parent) => ({
   checkName() {
     socket.emit("check_name", { name: this.name, room_uuid: parent.roomUUID });
   },
+  setSkill(v) {
+    this.skill = v;
+    console.log("setting skill to "+ v);
+  }
 });
 
 const gameHandler = (socket, parent) => {

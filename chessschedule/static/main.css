@@ -36,3 +36,21 @@ html, body {
   padding: 0.5rem;
   background-color: white;
 }
+
+.skill-input img {
+  height:5rem;
+  width:auto;
+}
+
+.skill-input button {
+  height:5rem;
+  width:5rem;
+}
+
+@media screen and (max-width: 760px) {
+
+  .skill-input button {
+    height: 4rem;
+    width: 4rem;
+  }
+}

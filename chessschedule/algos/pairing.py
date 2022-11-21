@@ -1,6 +1,7 @@
 from ..models.player import Player
 from typing import Tuple, List
 
+
 def create_pairing(players) -> List[Tuple[Player, Player]]:
     """
     Params
@@ -9,7 +10,7 @@ def create_pairing(players) -> List[Tuple[Player, Player]]:
     Returns
     List[Tuple[Player, Player]]
     """
-    
+
     pairs = []
     players.sort(key=lambda x: x.rating, reverse=True)
 
@@ -24,7 +25,8 @@ def create_pairing(players) -> List[Tuple[Player, Player]]:
                 break
 
     return pairs
-    
+
+
 """
 # test cases - put somewhere else later
 players = []
