@@ -15,17 +15,30 @@ requester. the default for emit is broadcast = True
 
 
 def get_room_code(code: str) -> Room:
+    " Gets a room with the code provided "
     for room in rooms:
         if room.room_code == code:
             return room
+    print(Exception(f"Unable to find room with code {code}"))
     return None
 
 
 def get_room_uuid(uuid: str) -> Room:
+    " Gets a room with the room_uuid provided "
     for room in rooms:
         if room.uuid == uuid:
             return room
-    raise Exception(f"Unable to find room with value {uuid}")
+    print(Exception(f"Unable to find room with value {uuid}"))
+    return None
+
+
+def get_room_host_uuid(host_uuid:str) -> Room:
+    " Gets a room with the host_uuid provided "
+    for room in rooms:
+        if room.host_uuid == host_uuid:
+            return room
+    print(Exception(f"Unable to find room with host_uuid {host_uuid}"))
+    return None
 
 
 def player_list_update(room: Room) -> None:
@@ -116,3 +129,13 @@ def check_name(data):
         {"valid": not get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},
         broadcast=False,
     )
+
+
+@skt.on("start_game")
+def start_game(data):
+    room = get_room_host_uuid(data["host_uuid"])
+    if room is None:
+        emit("start_game_res", {"Status" : "Start game failed. Internal server error, no room exists with host_uuid provided"}, broadcast=False)
+    else:
+        emit("start_game_res", {"Status" : "Success! Game started"}, broadcast=False)
+    emit("game_started", to=room.uuid)
