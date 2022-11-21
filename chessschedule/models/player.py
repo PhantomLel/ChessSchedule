@@ -17,7 +17,7 @@ class Player:
     def __init__(self, name: str, skill: int) -> None:
         self.name = name
         self.uuid = str(uuid.uuid1())
-        self.rating = self.get_skill()
+        self.rating = self.get_skill(int(skill))
         self.wins = 0
         self.losses = 0
         self.draws = 0

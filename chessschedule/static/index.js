@@ -74,6 +74,7 @@ const createRoomHandler = (socket, parent) => (
 const joinRoomHandler = (socket, parent) => ({
   code: "", // stores temp code
   name: "", // temp name
+  skill: 0, // stores temp skill
   validName: false,
   error: "",
   joinedRoom: false,
@@ -111,7 +112,8 @@ const joinRoomHandler = (socket, parent) => ({
   joinRoom() {
     socket.emit("join_room", {
       name: this.name,
-      code: this.code
+      code: this.code,
+      skill: this.skill
     });
   },
   checkCode() {

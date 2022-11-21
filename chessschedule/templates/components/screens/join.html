@@ -30,9 +30,13 @@
         </div>
       </div>
       <div x-show="joinedRoom">
-        <p class="block is-size-2">Enter A NickName</p>
+        <p class="block is-size-2">Enter Your Name</p>
         <div class="join-input block">
           <input @input.debounce.250ms="checkName()" x-model="name" class="input is-large" placeholder="Jason Quang" />
+        </div>
+        <p class="block is-size-2">Enter skill level (1-5)</p>
+        <div class="join-input block">
+          <input x-model="skill" class="input is-large" placeholder="3" />
         </div>
 
         <!-- error variable is reused for both forms -->
