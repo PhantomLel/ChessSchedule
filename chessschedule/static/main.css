@@ -31,7 +31,7 @@ html, body {
 .player-tile {
   display: inline-block !important;
   border-radius: 0.5rem;
-  font-size: 3rem;
+  font-size: 2rem;
   margin: 0.5rem 1rem;
   padding: 0.5rem;
   background-color: white;
