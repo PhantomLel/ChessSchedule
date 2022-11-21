@@ -52,7 +52,7 @@ def join_comp(data):
     # associate request SID with a socket "room"
     join_room(selected_room.uuid)
     
-    player = Player(data["name"])
+    player = Player(data["name"], data["skill"])
     # associate player information with chessScheduel game
     selected_room.add_player(player)
     emit("join_room_res", {"user_uuid":player.uuid}, broadcast=False)
