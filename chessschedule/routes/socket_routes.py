@@ -19,7 +19,8 @@ def get_room_code(code: str) -> Room:
     for room in rooms:
         if room.room_code == code:
             return room
-    print(Exception(f"Unable to find room with code {code}"))
+    # throw the exception to stop execution
+    raise Exception(f"Unable to find room with code {code}")
     return None
 
 
@@ -28,22 +29,23 @@ def get_room_uuid(uuid: str) -> Room:
     for room in rooms:
         if room.uuid == uuid:
             return room
-    print(Exception(f"Unable to find room with value {uuid}"))
+    # throw the exception to stop execution
+    raise Exception(f"Unable to find room with value {uuid}")
     return None
 
 
 def get_room_host_uuid(host_uuid:str) -> Room:
     " Gets a room with the host_uuid provided "
     for room in rooms:
-        if room.host_uuid == host_uuid:
+        if room.admin_uuid == host_uuid:
             return room
-    print(Exception(f"Unable to find room with host_uuid {host_uuid}"))
+    # throw the exception to stop execution
+    raise Exception(f"Unable to find room with host_uuid {host_uuid}")
     return None
 
 
 def player_list_update(room: Room) -> None:
     data = {"players": [vars(player) for player in room.players]}
-    print(data)
     emit("player_list_update", data, to=room.admin_sid)
 
 
@@ -99,7 +101,7 @@ def create(data):
     rooms.append(room)
     emit(
         "create_room_res",
-        {"user_uuid": admin_uuid, "room_uuid": room.uuid, "room_code": room.room_code},
+        {"host_uuid": admin_uuid, "room_uuid": room.uuid, "room_code": room.room_code},
         broadcast=False,
     )
 
@@ -135,7 +137,7 @@ def check_name(data):
 def start_game(data):
     room = get_room_host_uuid(data["host_uuid"])
     if room is None:
-        emit("start_game_res", {"Status" : "Start game failed. Internal server error, no room exists with host_uuid provided"}, broadcast=False)
+        emit("start_game_res", {"status" : 500}, broadcast=False)
     else:
-        emit("start_game_res", {"Status" : "Success! Game started"}, broadcast=False)
+        emit("start_game_res", {"status" :200}, broadcast=False)
     emit("game_started", to=room.uuid)

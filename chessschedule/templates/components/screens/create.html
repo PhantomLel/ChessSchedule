@@ -13,11 +13,12 @@
   </div>
   <div class="columns is-multiline is-centered">
     <template x-for="player in players">
-
       <div>
         <h1 x-text="player.name" class="player-tile"></h1>
       </div>
-      </div>
     </template>
+  </div>
+  <div class="columns is-centered">
+    <button @click="startGame()" class="button is-primary is-large start-btn">Start Tournament</button>
   </div>
 </section>

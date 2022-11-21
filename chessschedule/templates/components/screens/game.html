@@ -1,3 +1,12 @@
-<section x-data="gameHandler()">
-    <span x-text="userUUID"></span>
+<section
+  x-data="gameHandler(parent.socket, parent, $router.params.userUUID)"
+  class="hero is-fullheight has-text-centered"
+>
+  <div class="hero-body">
+    <div class="container">
+      <!-- waiting room -->
+      <h1 class="is-size-2" x-show="!gameStarted">Waiting for Tournament to Start!</h1>
+      <h1 class="is-size-2" x-show="gameStarted">Game Started</h1>
+    </div>
+  </div>
 </section>

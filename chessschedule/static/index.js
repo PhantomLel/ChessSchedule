@@ -1,4 +1,3 @@
-
 function socketManager() {
   return {
     parent: null, // so that it can be accessed by other managers
@@ -15,14 +14,13 @@ function socketManager() {
       this.roomCode = localStorage.getItem("roomCode");
       this.hostUUID = localStorage.getItem("hostUUID");
       // if uuids change, save them to localstorage
-      this.$watch("roomUUID, userUUID, roomCode, hostUUID", () =>
+      this.$watch("roomUUID, userUUID, roomCode", () =>
         this.saveUUIDs()
       );
     },
     saveUUIDs() {
       // store in case user becomes disconnected
       localStorage.setItem("roomUUID", this.roomUUID);
-      localStorage.setItem("hostUUID", this.hostUUID);
       localStorage.setItem("roomCode", this.roomCode);
       localStorage.setItem("userUUID", this.userUUID);
     },
@@ -32,15 +30,14 @@ function socketManager() {
         console.log("Connected");
       });
       this.socket.on("create_room_res", (data) => {
-        console.log(data);
         localStorage.setItem("roomUUID", data.room_uuid);
         localStorage.setItem("hostUUID", data.user_uuid);
         localStorage.setItem("roomCode", data.room_code);
         this.roomUUID = data.room_uuid;
-        this.userUUID = data.user_uuid;
+        this.hostUUID = data.host_uuid;
         this.roomCode = data.room_code;
 
-        this.$router.push("/create") // game has been created now we can load create screen
+        this.$router.push("/create"); // game has been created now we can load create screen
       });
     },
     createRoom() {
@@ -50,32 +47,38 @@ function socketManager() {
   };
 }
 
-const createRoomHandler = (socket, parent) => (
-  {
-    audio : new Audio('static/assets/awesome_music.mp3'),
-    players : [],
-    initialized : false,
-    init() {
-      console.log("create room handler")
-      socket.on("player_list_update", (data) => {
-        console.log(this.players);
-        this.players = data.players;
-      });
-      socket.emit("get_all_players", {
-        room_uuid : parent.roomUUID
-      }); // init players list
-      this.playMusic();
-    },
-    playMusic() {
-      this.audio.play();
-    }
-  }
-)
+const createRoomHandler = (socket, parent) => ({
+  audio: new Audio("static/assets/awesome_music.mp3"),
+  players: [],
+  initialized: false,
+  init() {
+    console.log("create room handler");
+    socket.on("player_list_update", (data) => {
+      this.players = data.players;
+    });
+    socket.on("start_game_res", (data) => {
+      if (data.status == 200) {
+        console.log("Game started wooo!")
+      }
+      console.log("start_game_res returned status " + data.status);
+    });
+    socket.emit("get_all_players", {
+      room_uuid: parent.roomUUID,
+    }); // init players list
+    this.playMusic();
+  },
+  playMusic() {
+    this.audio.play();
+  },
+  startGame() {
+    socket.emit("start_game", { host_uuid: parent.hostUUID });
+  },
+});
 
 const joinRoomHandler = (socket, parent) => ({
   code: "", // stores temp code
   name: "", // temp name
-  skill: 0, // stores temp skill
+  skill: null, // stores temp skill
   validName: false,
   error: "",
   joinedRoom: false,
@@ -105,7 +108,8 @@ const joinRoomHandler = (socket, parent) => ({
       if (!data.error) {
         parent.userUUID = data.user_uuid;
         // go to /game as we have successfully connected to a room
-        this.$router.push("/game");
+        this.$router.push("/game/" + parent.userUUID);
+        return;
       }
       console.error("something has went terribly wrong ");
     });
@@ -114,7 +118,7 @@ const joinRoomHandler = (socket, parent) => ({
     socket.emit("join_room", {
       name: this.name,
       code: this.code,
-      skill: this.skill
+      skill: this.skill,
     });
   },
   checkCode() {
@@ -129,11 +133,17 @@ const joinRoomHandler = (socket, parent) => ({
   },
   setSkill(v) {
     this.skill = v;
-    console.log("setting skill to "+ v);
-  }
+  },
 });
 
-const gameHandler = (socket, parent) => {
-  {
-  }
-};
+// player game handler
+const gameHandler = (socket, parent, userUUID) => ({
+  uuid : userUUID,
+  gameStarted: false,
+  init() {
+    socket.on("game_started", (data) => {
+      this.gameStarted = true;
+    });
+  },
+});
+

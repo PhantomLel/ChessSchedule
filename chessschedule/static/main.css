@@ -48,9 +48,14 @@ html, body {
 }
 
 @media screen and (max-width: 760px) {
-
   .skill-input button {
     height: 4rem;
     width: 4rem;
   }
+}
+
+.start-btn {
+  position: absolute;
+  bottom: 0;
+  margin: 1rem;
 }
