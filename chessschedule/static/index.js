@@ -1,3 +1,4 @@
+
 function socketManager() {
   return {
     parent: null, // so that it can be accessed by other managers

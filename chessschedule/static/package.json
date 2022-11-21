@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@shaun/alpinejs-router": "^1.2.10",
+    "alpinejs": "^3.10.5",
+    "install": "^0.13.0",
+    "npm": "^9.1.2",
+    "socket.io": "^4.5.3"
+  }
+}
