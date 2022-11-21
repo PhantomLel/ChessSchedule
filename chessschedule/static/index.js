@@ -126,6 +126,10 @@ const joinRoomHandler = (socket, parent) => ({
   checkName() {
     socket.emit("check_name", { name: this.name, room_uuid: parent.roomUUID });
   },
+  setSkill(v) {
+    this.skill = v;
+    console.log("setting skill to "+ v);
+  }
 });
 
 const gameHandler = (socket, parent) => {

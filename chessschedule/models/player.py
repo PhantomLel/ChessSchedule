@@ -5,7 +5,7 @@ WIN = (1,0)
 DRAW = (.5, .5)
 LOSS = (0,1)
 
-skill_dict = {
+SKILL_DICT = {
     1:100,
     2:250,
     3:500,

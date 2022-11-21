@@ -34,9 +34,13 @@
         <div class="join-input block">
           <input @input.debounce.250ms="checkName()" x-model="name" class="input is-large" placeholder="Jason Quang" />
         </div>
-        <p class="block is-size-2">Enter skill level (1-5)</p>
-        <div class="join-input block">
-          <input x-model="skill" class="input is-large" placeholder="3" />
+        <p class="block is-size-2">Select Skill Level</p>
+        <div class="skill-input block">
+          <button class="button" @click="setSkill(1)"><img src="static/assets/pawn.png"></button> 
+          <button class="button" @click="setSkill(2)"><img src="static/assets/knight.png"></button> 
+          <button class="button" @click="setSkill(3)"><img src="static/assets/bishop.png"></button> 
+          <button class="button" @click="setSkill(4)"><img src="static/assets/rook.png"></button> 
+          <button class="button" @click="setSkill(5)"><img src="static/assets/queen.png"></button> 
         </div>
 
         <!-- error variable is reused for both forms -->
