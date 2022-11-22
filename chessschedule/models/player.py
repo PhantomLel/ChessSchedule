@@ -1,5 +1,6 @@
 import uuid
 from ..algos.elo import change_rating
+from flask_socketio import emit, send
 
 WIN = (1, 0)
 DRAW = (0.5, 0.5)
@@ -9,7 +10,7 @@ SKILL_DICT = {1: 100, 2: 250, 3: 500, 4: 700, 5: 900}
 
 
 class Player:
-    def __init__(self, name: str, skill: int) -> None:
+    def __init__(self, name: str, skill: int, sid:str) -> None:
         self.name = name
         self.uuid = str(uuid.uuid1())
         self.rating = self.get_skill(int(skill))
@@ -17,6 +18,7 @@ class Player:
         self.losses = 0
         self.draws = 0
         self.players_played = dict()
+        self.sid = sid
 
     def get_skill(self, assessment: int):
         if assessment not in SKILL_DICT:

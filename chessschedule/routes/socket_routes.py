@@ -5,13 +5,8 @@ from typing import List
 from ..models.room import Room
 from ..models.player import Player
 from uuid import uuid1
-from flask import request
+from flask import request, session
 import json
-
-"""
-emit() has a kwarg called broadcast, which dictates sending to all users connected to the socket vs sending to just the
-requester. the default for emit is broadcast = True
-"""
 
 
 def get_room_code(code: str) -> Room:
@@ -30,7 +25,7 @@ def get_room_uuid(uuid: str) -> Room:
         if room.uuid == uuid:
             return room
     # throw the exception to stop execution
-    raise Exception(f"Unable to find room with value {uuid}")
+    raise Exception(f"Unable to find room with value {uuid} - often occurs when server restarts and clients attempt to maintain connectivity to closed server")
     return None
 
 
@@ -77,7 +72,7 @@ def join_comp(data):
     # associate request SID with a socket "room"
     join_room(selected_room.uuid)
 
-    player = Player(data["name"], data["skill"])
+    player = Player(data["name"], data["skill"], request.sid)
     # associate player information with chessScheduel game
     selected_room.add_player(player)
     emit("join_room_res", {"user_uuid": player.uuid}, broadcast=False)
@@ -97,7 +92,7 @@ rooms: List[Room] = list()
 def create(data):
     admin_uuid = str(uuid1())
     admin_sid = request.sid
-    room = Room(admin_uuid, admin_sid)
+    room = Room(admin_uuid, admin_sid, session)
     rooms.append(room)
     emit(
         "create_room_res",
@@ -125,7 +120,7 @@ def delete_room(data):
 
 @skt.on("check_name")
 def check_name(data):
-    """valid if name is not taken, and not valid if name is taken"""
+    " Valid if name is not taken, and not valid if name is taken. "
     emit(
         "check_name_res",
         {"valid": not get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},
@@ -140,4 +135,5 @@ def start_game(data):
         emit("start_game_res", {"status" : 500}, broadcast=False)
     else:
         emit("start_game_res", {"status" :200}, broadcast=False)
-    emit("game_started", to=room.uuid)
+    
+    emit("pairings", {"round":room.rounds, "pairings":room.get_pairings()}, to=room.uuid)

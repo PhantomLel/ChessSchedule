@@ -2,14 +2,8 @@ from ..models.player import Player
 from typing import Tuple, List
 
 
-def create_pairing(players) -> List[Tuple[Player, Player]]:
-    """
-    Params
-    players : List[Player]
-
-    Returns
-    List[Tuple[Player, Player]]
-    """
+def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
+    " Returns a list of player (as dictionaries) tuple pairings. "
 
     pairs = []
     players.sort(key=lambda x: x.rating, reverse=True)
@@ -20,30 +14,31 @@ def create_pairing(players) -> List[Tuple[Player, Player]]:
         for match in players:
             # pair if good match or last player available
             if (match.uuid not in player.players_played) or (match == players[-1]):
-                pairs.append((player, match))
+                # run vars to make the player serializeable by json - objects cant be serialized, but dicts can
+                pairs.append((vars(player), vars(match)))
                 players.remove(match)
                 break
 
     return pairs
 
 
-"""
-# test cases - put somewhere else later
-players = []
-for i in range(6):
-    a = Player(str(i))
-    a.rating += i*100
-    players.append(a)
+if __name__ == "__main__":
+    print("Pairing tests running...")
 
-for j in range(10):
-    d = create_pairing(players)
-    for x in d:
-        x[0].game_result("loss", x[1])
-        x[1].game_result("win", x[0])
-        players.append(x[0])
-        players.append(x[1])
+    players = []
+    for i in range(6):
+        a = Player(str(i))
+        a.rating += i*100
+        players.append(a)
 
-    #print(f"pairings: {[[[x[0].name, x[0].rating],[x[1].name, x[1].rating]] for x in d]}")
-    print(f"results : {[[x.name, x.rating] for x in players]}")
-    print("-"*10)
-"""
+    for j in range(10):
+        d = create_pairing(players)
+        for x in d:
+            x[0].game_result("loss", x[1])
+            x[1].game_result("win", x[0])
+            players.append(x[0])
+            players.append(x[1])
+
+        #print(f"pairings: {[[[x[0].name, x[0].rating],[x[1].name, x[1].rating]] for x in d]}")
+        print(f"results : {[[x.name, x.rating] for x in players]}")
+        print("-"*10)
