@@ -103,7 +103,7 @@ def create(data):
     for i in range(5):
         a = Player(str(i), 5, 5000)
         a.rating += i*100
-        room.add_player(player)
+        room.add_player(a)
     player_list_update(room)
 
 
