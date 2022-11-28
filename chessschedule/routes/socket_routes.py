@@ -99,6 +99,12 @@ def create(data):
         {"host_uuid": admin_uuid, "room_uuid": room.uuid, "room_code": room.room_code},
         broadcast=False,
     )
+    # debug
+    for i in range(5):
+        a = Player(str(i), 5, 5000)
+        a.rating += i*100
+        room.add_player(player)
+    player_list_update(room)
 
 
 @skt.on("delete_room")
