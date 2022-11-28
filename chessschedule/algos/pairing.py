@@ -6,11 +6,13 @@ def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
     " Returns a list of player (as dictionaries) tuple pairings. "
 
     pairs = []
+    odd = False
     # if the number of players are odd then have one sit out for a round
     if (len(players) % 2 != 0):
         players.sort(key=lambda x: x.sitout_num)
         sitout = players[0]
         sitout.sitout_num += 1
+        odd = True
         
     
     players.sort(key=lambda x: x.rating, reverse=True)
@@ -26,7 +28,8 @@ def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
                 players.remove(match)
                 break
 
-    pairs.append((vars(sitout)))
+    if odd:
+        pairs.append((vars(sitout)))
     return pairs
 
 
