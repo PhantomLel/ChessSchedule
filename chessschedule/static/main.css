@@ -37,6 +37,22 @@ html, body {
   background-color: white;
 }
 
+.pair-tile {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(243, 243, 243);
+    padding: 0.5em;
+    margin-bottom: 1.5em;
+    border-radius: 10px;
+    font-size: 1em;
+    transition: ease 0.3s; 
+}
+
+.is-player-pair {
+  /* bulma green color */
+  background-color: hsl(153, 53%, 53%); 
+}
+
 .skill-input img {
   height:5rem;
   width:auto;

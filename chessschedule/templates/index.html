@@ -28,8 +28,11 @@
     <template x-route="/create">
         {% include 'components/screens/create.html' %}
     </template>
-    <template x-route="/game/:userUUID">
+    <template x-route="/game/:name/:userUUID">
         {% include 'components/screens/game.html' %}
+    </template>
+    <template x-route="/host/:roomUUID">
+        {% include 'components/screens/host.html' %}
     </template>
 
     <script src="/static/index.js"></script>

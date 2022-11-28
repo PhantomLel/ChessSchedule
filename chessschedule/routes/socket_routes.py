@@ -100,7 +100,7 @@ def create(data):
         broadcast=False,
     )
     # debug
-    for i in range(5):
+    for i in range(10):
         a = Player(str(i), 5, 5000)
         a.rating += i*100
         room.add_player(a)
@@ -139,6 +139,7 @@ def start_game(data):
     room = get_room_host_uuid(data["host_uuid"])
     if room is None:
         emit("start_game_res", {"status" : 500}, broadcast=False)
+        return
     else:
         emit("start_game_res", {"status" :200}, broadcast=False)
     

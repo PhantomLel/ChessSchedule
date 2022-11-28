@@ -59,6 +59,7 @@ const createRoomHandler = (socket, parent) => ({
     socket.on("start_game_res", (data) => {
       if (data.status == 200) {
         console.log("Game started wooo!")
+        this.$router.push("/host/" + parent.roomUUID);
       }
       console.log("start_game_res returned status " + data.status);
     });
@@ -108,7 +109,7 @@ const joinRoomHandler = (socket, parent) => ({
       if (!data.error) {
         parent.userUUID = data.user_uuid;
         // go to /game as we have successfully connected to a room
-        this.$router.push("/game/" + parent.userUUID);
+        this.$router.push(`/game/${this.name}/${parent.userUUID}`);
         return;
       }
       console.error("something has went terribly wrong ");
@@ -137,13 +138,31 @@ const joinRoomHandler = (socket, parent) => ({
 });
 
 // player game handler
-const gameHandler = (socket, parent, userUUID) => ({
+const gameHandler = (socket, parent, userUUID ) => ({
   uuid : userUUID,
   gameStarted: false,
+  pairings : [],
+  playerPair : null,
   init() {
-    socket.on("game_started", (data) => {
+    socket.on("pairings", (data) => {
+      this.pairings = data.pairings;
       this.gameStarted = true;
     });
+    // everytime pairings changes, find the right pair
+    this.$watch("pairings", () => this.findPlayerPair());
+
   },
+  findPlayerPair() {
+    // go through every pair and find the one that is the current player's
+    for (let pair of this.pairings) {
+      parentLoop:
+      for (let player of pair) {
+        if (player.uuid == parent.userUUID) {
+          this.playerPair = pair;
+          break parentLoop;
+        }
+      }
+    }
+  }
 });
 

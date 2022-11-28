@@ -19,6 +19,6 @@
     </template>
   </div>
   <div class="columns is-centered">
-    <button @click="startGame()" class="button is-primary is-large start-btn">Start Tournament</button>
+    <button :disabled="players.length < 2" @click="startGame()" class="button is-primary is-large start-btn">Start Tournament</button>
   </div>
 </section>

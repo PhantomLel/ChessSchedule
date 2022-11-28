@@ -1,5 +1,6 @@
 from ..models.player import Player
 from typing import Tuple, List
+import random
 
 
 def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
@@ -10,7 +11,9 @@ def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
     # if the number of players are odd then have one sit out for a round
     if (len(players) % 2 != 0):
         players.sort(key=lambda x: x.sitout_num)
-        sitout = players[0]
+        # for testing REMOVE LATER. 
+        sitout = random.choice(players)
+        players.remove(sitout)
         sitout.sitout_num += 1
         odd = True
         
@@ -29,7 +32,9 @@ def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
                 break
 
     if odd:
-        pairs.append((vars(sitout)))
+        # must first be put in list then changed into tuple for whatever reason i hate life 
+        pairs.append(tuple([vars(sitout)]))
+    print(pairs)
     return pairs
 
 
