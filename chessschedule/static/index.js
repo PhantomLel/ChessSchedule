@@ -14,9 +14,7 @@ function socketManager() {
       this.roomCode = localStorage.getItem("roomCode");
       this.hostUUID = localStorage.getItem("hostUUID");
       // if uuids change, save them to localstorage
-      this.$watch("roomUUID, userUUID, roomCode", () =>
-        this.saveUUIDs()
-      );
+      this.$watch("roomUUID, userUUID, roomCode", () => this.saveUUIDs());
     },
     saveUUIDs() {
       // store in case user becomes disconnected
@@ -58,7 +56,7 @@ const createRoomHandler = (socket, parent) => ({
     });
     socket.on("start_game_res", (data) => {
       if (data.status == 200) {
-        console.log("Game started wooo!")
+        console.log("Game started wooo!");
         this.$router.push("/host/" + parent.roomUUID);
       }
       console.log("start_game_res returned status " + data.status);
@@ -138,31 +136,27 @@ const joinRoomHandler = (socket, parent) => ({
 });
 
 // player game handler
-const gameHandler = (socket, parent, userUUID ) => ({
-  uuid : userUUID,
+const gameHandler = (socket, parent, userUUID) => ({
+  uuid: userUUID,
   gameStarted: false,
-  pairings : [],
-  playerPair : null,
+  pairings: [],
+  playerPair: null,
   init() {
     socket.on("pairings", (data) => {
       this.pairings = data.pairings;
       this.gameStarted = true;
-    });
-    // everytime pairings changes, find the right pair
-    this.$watch("pairings", () => this.findPlayerPair());
-
-  },
-  findPlayerPair() {
-    // go through every pair and find the one that is the current player's
-    for (let pair of this.pairings) {
-      parentLoop:
-      for (let player of pair) {
-        if (player.uuid == parent.userUUID) {
-          this.playerPair = pair;
-          break parentLoop;
+      // go through every pair and find the one that is the current player's
+      for (let pair of this.pairings) {
+        parentLoop: for (let player of pair) {
+          if (player.uuid == parent.userUUID) {
+            this.playerPair = pair;
+            break parentLoop;
+          }
         }
       }
-    }
-  }
+      // remove that pair from the list and add it to the front
+      this.pairings = this.pairings.filter((i) => i !== this.playerPair);
+      this.pairings.unshift(this.playerPair);
+    });
+  },
 });
-

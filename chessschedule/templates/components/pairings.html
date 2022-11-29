@@ -1,27 +1,29 @@
 <div class="columns is-centered">
   <div class="column">
     <h1 x-text="name"></h1>
-    <template x-for="pair in pairings">
-      <div>
-        <template x-if="pair.length == 2">
-          <h1
-            class="pair-tile"
-            :class="{ 'is-player-pair' : playerPair === pair}"
-          >
-            <span x-text="pair[0].name"></span> -
-            <span x-text="pair[1].name"></span>
-          </h1>
-        </template>
-        <!-- uneven amount of players -->
-        <template x-if="pair.length == 1">
-          <h1
-            class="pair-tile"
-            :class="{ 'is-player-pair' : playerPair === pair}"
-          >
-            <span x-text="pair[0].name"></span> <span>dye</span>
-          </h1>
-        </template>
-      </div>
-    </template>
+    <div class="pairings">
+      <template x-for="pair in pairings">
+        <div>
+          <template x-if="pair.length == 2">
+            <h1
+              class="pair-tile"
+              :class="{ 'is-player-pair' : playerPair === pair}"
+            >
+              <span x-text="pair[0].name"></span>
+              <span x-text="pair[1].name"></span>
+            </h1>
+          </template>
+          <!-- uneven amount of players -->
+          <template x-if="pair.length == 1">
+            <h1
+              class="pair-tile"
+              :class="{ 'is-player-pair' : playerPair === pair}"
+            >
+              <span x-text="pair[0].name"></span> <span>Bye - Sitout :(</span>
+            </h1>
+          </template>
+        </div>
+      </template>
+    </div>
   </div>
 </div>

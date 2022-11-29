@@ -7,6 +7,8 @@ from ..models.player import Player
 from uuid import uuid1
 from flask import request, session
 import json
+import random 
+import secrets
 
 
 def get_room_code(code: str) -> Room:
@@ -100,9 +102,10 @@ def create(data):
         broadcast=False,
     )
     # debug
-    for i in range(10):
-        a = Player(str(i), 5, 5000)
-        a.rating += i*100
+    for i in range(24):
+        # random name and elo
+        a = Player(secrets.token_hex(6), 5, 5000)
+        a.rating += random.randint(100, 1000)
         room.add_player(a)
     player_list_update(room)
 

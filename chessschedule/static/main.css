@@ -41,17 +41,30 @@ html, body {
     display: flex;
     justify-content: space-between;
     background-color: rgb(243, 243, 243);
-    padding: 0.5em;
+    padding: 0.4em;
     margin-bottom: 1.5em;
     border-radius: 10px;
-    font-size: 1em;
+    font-size: 0.8em;
     transition: ease 0.3s; 
 }
 
 .is-player-pair {
-  /* bulma green color */
+  font-size: 1.3em;
   background-color: hsl(153, 53%, 53%); 
 }
+
+@media screen and (max-width: 750px) {
+  .pair-tile {
+    display: block;
+    text-align: center;
+    font-size: 0.5em;
+    padding: 0.2em;
+  }
+  .is-player-pair {
+    font-size: 0.8em;
+  }
+}
+
 
 .skill-input img {
   height:5rem;
