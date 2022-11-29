@@ -25,7 +25,7 @@ class Player:
             )
         return SKILL_DICT[assessment]
 
-    def game_result(self, result: str, opponent) -> None:
+    def game_result(self, result: str, opponent_rating, opponent_uuid) -> None:
         "Updates nessesary player information after a game is played, based on the result."
         if result == "win":
             self.wins += 1
@@ -42,8 +42,8 @@ class Player:
             )
 
         # update elo
-        self.rating = change_rating(self.rating, opponent.rating, result)[0]
+        self.rating = change_rating(self.rating, opponent_rating, result)[0]
         # keep track of game as being played
-        self.players_played[opponent.uuid] = (
-            self.players_played.get(opponent.uuid, 0) + 1
+        self.players_played[opponent_uuid] = (
+            self.players_played.get(opponent_uuid, 0) + 1
         )

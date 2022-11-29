@@ -3,7 +3,9 @@ from typing import List, Dict,Tuple
 from .player import Player
 from ..algos import pairing
 from random import randint
+from collections import namedtuple
 
+Claim = namedtuple("Claim", "winner_uuid claimer")
 
 class Room:
     def __init__(self, admin_uuid: str, admin_sid: str, session) -> None:
@@ -17,6 +19,8 @@ class Room:
         self.player_names = set()
         self.rounds = 1
         self.current_pairings:List[Tuple[dict, dict]]
+        self.claims:List[Claim] = list()
+        self.draw_claims:List[str] = list()
 
     def add_player(self, player: Player) -> None:
         if player.name in self.player_names:
@@ -30,3 +34,74 @@ class Room:
     def get_pairings(self):
         self.current_pairings = pairing.create_pairing(self.players)
         return self.current_pairings
+    
+    def get_player_by_uuid(self, user_uuid:str):
+        for player in self.players:
+            if player.uuid == user_uuid:
+                return player
+        else:
+            return None
+
+    def get_opponent_by_uuid(self, user_uuid:str) -> str:
+        opponent_uuid = None
+        for pairing in self.current_pairings:
+            if pairing[0].uuid == user_uuid:
+                opponent_uuid = pairing[1]
+                break
+            elif pairing[1].uuid == user_uuid:
+                opponent_uuid = pairing[0]
+                break
+        return opponent_uuid
+
+    def get_player_claim(self, user) -> str:
+        if type(user) is str:
+            user = self.get_player_by_uuid(user)
+
+        result = None
+        if user.uuid in self.draw_claims:
+            return "draw"
+
+        for claim in self.claims:
+            if claim.claimer != user.uuid:
+                continue
+            result = "win" if claim.winner == user.uuid else "loss"
+        return result
+
+    def get_opponent_claim(self, user_uuid):
+        opponent = get_opponent_by_uuid(user_uuid)
+        return self.get_player_claim(opponent)
+        
+
+    def game_result(self, user_uuid:str, user_claim:str) -> str:
+        opponent = self.get_opponent_by_uuid(user_uuid)
+        user = self.get_player_by_uuid(user_uuid)
+
+        opponent_claim = self.get_opponent_claim(user_uuid)
+        if user_claim == "draw":
+            # draw logic
+            if opponent_claim == "draw":
+                # the players draw
+                return "success"
+            elif opponent_claim is None:
+                self.draw_claims.append(user_uuid)
+                return "inconclusive"
+            else:
+                return "failure"
+
+        if opponent_claim is None:
+            self.claims.append(Claim(user_claim, user_uuid))
+            return "inconclusive"
+
+        user_claim = "win" if user_claim == user_uuid else "loss"
+        if user_claim == "win" and opponent_claim == "loss":
+            user_temp_rating = user.rating 
+            user.game_result("win", opponent.rating, opponent.uuid)
+            opponent.game_result("loss", user_temp_rating, user.uuid)
+            return "success"
+        elif user_claim == "loss" and opponent_claim == "win":
+            user_temp_rating = user.rating 
+            user.game_result("loss", opponent.rating, opponent.uuid)
+            opponent.game_result("win", user_temp_rating, user.uuid)
+            return "success"
+        else:
+            return "failure"

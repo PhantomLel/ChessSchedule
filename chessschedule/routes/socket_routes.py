@@ -45,6 +45,7 @@ def player_list_update(room: Room) -> None:
     data = {"players": [vars(player) for player in room.players]}
     emit("player_list_update", data, to=room.admin_sid)
 
+# ------------------- big line ------------------
 
 @skt.on("connect")
 def connect(data):
@@ -148,3 +149,14 @@ def start_game(data):
         emit("start_game_res", {"status" :200}, broadcast=False)
     
     emit("pairings", {"round":room.rounds, "pairings":room.get_pairings()}, to=room.uuid)
+
+@skt.on("game_result")
+def game_result(data):
+    room = get_room_uuid(data["room_uuid"])
+    success = room.game_result(data["player_uuid"], data["result"])
+    user = room.get_player_by_uuid(data["player_uuid"])
+    opponent = room.get_opponent_by_uuid(data["player_uuid"])
+
+    if success != "inconclusive":
+        emit("game_result_res", {"status":200 if success=="success" else 500}, to=user.sid, broadcast=False)
+        emit("game_result_res", {"status":200 if success=="success" else 500}, to=opponent.sid, broadcast=False)
