@@ -110,6 +110,7 @@ def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
     pairs.append((sitout))
     return pairs
 
+import random
 
 if __name__ == "__main__":
     print("Pairing tests running...")
@@ -117,7 +118,7 @@ if __name__ == "__main__":
     players = []
     for i in range(5):
         a = Player(str(i), 3, 1902409124)
-        a.rating += i*100
+        a.rating = random.randint(100,1000)
         players.append(a)
 
     print(create_pairing(players))

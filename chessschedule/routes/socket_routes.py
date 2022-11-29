@@ -104,8 +104,9 @@ def create(data):
     # debug
     for i in range(24):
         # random name and elo
-        a = Player(secrets.token_hex(6), 5, 5000)
-        a.rating += random.randint(100, 1000)
+        a = Player("", 5, 5000)
+        a.rating = random.randint(100, 1000)
+        a.name = str(a.rating)
         room.add_player(a)
     player_list_update(room)
 
