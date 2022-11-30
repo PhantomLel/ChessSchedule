@@ -177,6 +177,12 @@ const gameHandler = (socket, parent, userUUID) => ({
     socket.on("game_result_res", (data) => {
       if (data.status === 200) {
         this.showLeaderboard = true;
+      // checking who won failed :()
+      } else {
+        console.warn("Win selection failed. Reprompting");
+        // reset who is selected
+        this.winSelected = null;
+        openModal(this.$refs.selectModal);
       }
     });
   },
