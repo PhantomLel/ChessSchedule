@@ -42,7 +42,7 @@ class Player:
             )
 
         # update elo
-        self.rating = change_rating(self.rating, opponent_rating, result)[0]
+        self.rating = change_rating(self.rating, opponent_rating, result)
         # keep track of game as being played
         self.players_played[opponent_uuid] = (
             self.players_played.get(opponent_uuid, 0) + 1

@@ -9,8 +9,8 @@ def change_rating(player1_rating, player2_rating, game_result) -> Tuple[int, int
     change_rating updates the player's rating
     :param player1_rating: the rating of the first player pre-match
     :param player2_rating: the rating of the opponent player pre-match
-    :param game_result: tuple of game result represented as 1 for win, 0.5 for draw, and 0 for loss
-    :return: tuple of new ratings
+    :param game_result: float - 1 for win, 0.5 for draw, and 0 for loss
+    :return: new rating for player 1
 
     Reference: https://www.omnicalculator.com/sports/elo#elo-calculator-in-practice-elo-rating-in-a-chess-tournament
     """
@@ -20,11 +20,12 @@ def change_rating(player1_rating, player2_rating, game_result) -> Tuple[int, int
     expected_score = 1 / (
         1 + 10 ** ((player2_rating - player1_rating) / ELO_COEFFICIENT)
     )
-    new_rating1 = round(player1_rating + K_FACTOR * (game_result[0] - expected_score))
-    # Player 2
-    expected_score = 1 / (
-        1 + 10 ** ((player1_rating - player2_rating) / ELO_COEFFICIENT)
-    )
-    new_rating2 = round(player2_rating + K_FACTOR * (game_result[1] - expected_score))
+    new_rating1 = round(player1_rating + K_FACTOR * (game_result - expected_score))
+    # # Player 2
+    # expected_score = 1 / (
+    #     1 + 10 ** ((player1_rating - player2_rating) / ELO_COEFFICIENT)
+    # )
+    # new_rating2 = round(player2_rating + K_FACTOR * (game_result[1] - expected_score))
 
-    return (new_rating1, new_rating2)
+    # return (new_rating1, new_rating2)
+    return new_rating1
