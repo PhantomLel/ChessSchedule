@@ -2,13 +2,14 @@
   <div class="column">
     <!-- only show button if it is not a bye -->
     <button
-      x-show="!isBye"
+      x-show="!isBye && !gameSubmitted"
       @click="$refs.selectModal.classList.add('is-active')"
       class="button is-primary is-large mb-6"
     >
       Game Completed
     </button>
-    <h1 x-show="isBye" class="is-title-3 mb-6">Unlucky! Please go spectate the other matches.</h1>
+    <h1 x-show="gameSubmitted && !isBye" class="is-size-2 mb-6">Game has been submitted!</h1>
+    <h1 x-show="isBye" class="is-size-2 mb-6">Unlucky! Please go spectate the other matches.</h1>
     <!-- modal for selection -->
     {% include "components/win-selection-modal.html" %}
     <div class="pairings box">

@@ -182,6 +182,7 @@ const gameHandler = (socket, parent, userUUID) => ({
         console.warn("Win selection failed. Reprompting");
         // reset who is selected
         this.winSelected = null;
+        this.gameSubmitted = false;
         openModal(this.$refs.selectModal);
       }
     });
