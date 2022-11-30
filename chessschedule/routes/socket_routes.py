@@ -170,19 +170,19 @@ def game_result(data):
             # TODO make sure to make this actually return list of results. This is just placeholder
             emit("round_results", {"results": "something"})
     if success != "inconclusive":
-       emit(
+        emit(
             "game_result_res",
             {"status": 200 if success == "success" else 500},
             to=user.sid,
             broadcast=False,
         )
-    if opponent is not None: # when a user has a bye, their opponent is None
-        emit(
-            "game_result_res",
-            {"status": 200 if success == "success" else 500},
-            to=opponent.sid,
-            broadcast=False,
-        )
+        if opponent is not None: # when a user has a bye, their opponent is None
+            emit(
+                "game_result_res",
+                {"status": 200 if success == "success" else 500},
+                to=opponent.sid,
+                broadcast=False,
+            )
            
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
