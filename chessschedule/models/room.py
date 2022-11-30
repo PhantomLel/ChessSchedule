@@ -45,18 +45,25 @@ class Room:
         return None
 
     def get_opponent_by_uuid(self, user_uuid: str) -> str:
+        opponent_uuid = None
         for pairing in self.current_pairings:
+            if len(pairing) == 1: continue # continue on bye
             if pairing[0]["uuid"] == user_uuid:
                 opponent_uuid = pairing[1]["uuid"]
                 break
             elif pairing[1]["uuid"] == user_uuid:
                 opponent_uuid = pairing[0]["uuid"]
                 break
+
+        if opponent_uuid is None: # opponent is none, can happen when player has a bye or if something went wrong
+            return None
         return self.get_player_by_uuid(opponent_uuid)
 
     def get_player_claim(self, user) -> str:
         if type(user) is str:
             user = self.get_player_by_uuid(user)
+        elif user is None:
+            return "bye"
 
         result = None
         if user.uuid in self.draw_claims:
@@ -91,6 +98,9 @@ class Room:
         if opponent_claim is None:
             self.claims.append(Claim(user_claim, user_uuid))
             return "inconclusive"
+        
+        if opponent_claim == "bye":
+            return "success"
 
         user_claim = "win" if user_claim == user_uuid else "loss"
         if user_claim == "win" and opponent_claim == "loss":
