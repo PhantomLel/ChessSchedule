@@ -7,12 +7,12 @@ from ..models.player import Player
 from uuid import uuid1
 from flask import request, session
 import json
-import random 
+import random
 import secrets
 
 # ------------------- large line ------------------
 def get_room_code(code: str) -> Room:
-    " Gets a room with the code provided "
+    "Gets a room with the code provided"
     for room in rooms:
         if room.room_code == code:
             return room
@@ -22,17 +22,19 @@ def get_room_code(code: str) -> Room:
 
 
 def get_room_uuid(uuid: str) -> Room:
-    " Gets a room with the room_uuid provided "
+    "Gets a room with the room_uuid provided"
     for room in rooms:
         if room.uuid == uuid:
             return room
     # throw the exception to stop execution
-    raise Exception(f"Unable to find room with value {uuid} - often occurs when server restarts and clients attempt to maintain connectivity to closed server")
+    raise Exception(
+        f"Unable to find room with value {uuid} - often occurs when server restarts and clients attempt to maintain connectivity to closed server"
+    )
     return None
 
 
-def get_room_host_uuid(host_uuid:str) -> Room:
-    " Gets a room with the host_uuid provided "
+def get_room_host_uuid(host_uuid: str) -> Room:
+    "Gets a room with the host_uuid provided"
     for room in rooms:
         if room.admin_uuid == host_uuid:
             return room
@@ -45,7 +47,9 @@ def player_list_update(room: Room) -> None:
     data = {"players": [vars(player) for player in room.players]}
     emit("player_list_update", data, to=room.admin_sid)
 
+
 # ------------------- big line ------------------
+
 
 @skt.on("connect")
 def connect(data):
@@ -131,7 +135,7 @@ def delete_room(data):
 
 @skt.on("check_name")
 def check_name(data):
-    " Valid if name is not taken, and not valid if name is taken. "
+    "Valid if name is not taken, and not valid if name is taken."
     emit(
         "check_name_res",
         {"valid": not get_room_uuid(data["room_uuid"]).name_is_taken(data["name"])},
@@ -143,12 +147,15 @@ def check_name(data):
 def start_game(data):
     room = get_room_host_uuid(data["host_uuid"])
     if room is None:
-        emit("start_game_res", {"status" : 500}, broadcast=False)
+        emit("start_game_res", {"status": 500}, broadcast=False)
         return
     else:
-        emit("start_game_res", {"status" :200}, broadcast=False)
-    
-    emit("pairings", {"round":room.round, "pairings":room.get_pairings()}, to=room.uuid)
+        emit("start_game_res", {"status": 200}, broadcast=False)
+
+    emit(
+        "pairings", {"round": room.round, "pairings": room.get_pairings()}, to=room.uuid
+    )
+
 
 @skt.on("game_result")
 def game_result(data):
@@ -161,13 +168,24 @@ def game_result(data):
         room.matches_left -= 1
         if room.matches_left <= 0:
             # TODO make sure to make this actually return list of results. This is just placeholder
-            emit("round_results", {"results" : "something"})
+            emit("round_results", {"results": "something"})
     if success != "inconclusive":
-        emit("game_result_res", {"status":200 if success=="success" else 500}, to=user.sid, broadcast=False)
-        emit("game_result_res", {"status":200 if success=="success" else 500}, to=opponent.sid, broadcast=False)
-
+       emit(
+            "game_result_res",
+            {"status": 200 if success == "success" else 500},
+            to=user.sid,
+            broadcast=False,
+        )
+        if opponent is not None: # when a user has a bye, their opponent is None
+            emit(
+                "game_result_res",
+                {"status": 200 if success == "success" else 500},
+                to=opponent.sid,
+                broadcast=False,
+            )
+           
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
     room = get_room_uuid(data["room_uuid"]) 
     emit("leaderboard", {"rankings": [{"name":"nans niemann", "score" : [1, 2, 45]}, {"name":"magnus hess", "score" : [45, 2, 1]}]}, to=room.uuid)
-    print("debug"*10)
+  

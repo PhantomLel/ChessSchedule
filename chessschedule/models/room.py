@@ -1,11 +1,12 @@
 from uuid import uuid1
-from typing import List, Dict,Tuple 
+from typing import List, Dict, Tuple
 from .player import Player
 from ..algos import pairing
 from random import randint
 from collections import namedtuple
 
 Claim = namedtuple("Claim", "winner_uuid claimer")
+
 
 class Room:
     def __init__(self, admin_uuid: str, admin_sid: str, session) -> None:
@@ -19,9 +20,9 @@ class Room:
         self.player_names = set()
         self.round = 1
         self.matches_left = None
-        self.current_pairings:List[Tuple[dict, dict]]
-        self.claims:List[Claim] = list()
-        self.draw_claims:List[str] = list()
+        self.current_pairings: List[Tuple[dict, dict]]
+        self.claims: List[Claim] = list()
+        self.draw_claims: List[str] = list()
 
     def add_player(self, player: Player) -> None:
         if player.name in self.player_names:
@@ -33,31 +34,36 @@ class Room:
         return name in self.player_names
 
     def get_pairings(self):
-        self.current_pairings = pairing.create_pairing(self.players)
+        self.current_pairings = pairing.create_pairing(self.players.copy())
         self.matches_left = len(self.current_pairings)
         return self.current_pairings
-    
-    def get_player_by_uuid(self, user_uuid:str):
+
+    def get_player_by_uuid(self, user_uuid: str):
         for player in self.players:
             if player.uuid == user_uuid:
                 return player
-        else:
-            return None
+        return None
 
-    def get_opponent_by_uuid(self, user_uuid:str) -> str:
+    def get_opponent_by_uuid(self, user_uuid: str) -> str:
         opponent_uuid = None
         for pairing in self.current_pairings:
+            if len(pairing) == 1: continue # continue on bye
             if pairing[0]["uuid"] == user_uuid:
-                opponent_uuid = pairing[1]
+                opponent_uuid = pairing[1]["uuid"]
                 break
             elif pairing[1]["uuid"] == user_uuid:
-                opponent_uuid = pairing[0]
+                opponent_uuid = pairing[0]["uuid"]
                 break
-        return opponent_uuid
+
+        if opponent_uuid is None: # opponent is none, can happen when player has a bye or if something went wrong
+            return None
+        return self.get_player_by_uuid(opponent_uuid)
 
     def get_player_claim(self, user) -> str:
         if type(user) is str:
             user = self.get_player_by_uuid(user)
+        elif user is None:
+            return "bye"
 
         result = None
         if user.uuid in self.draw_claims:
@@ -66,19 +72,18 @@ class Room:
         for claim in self.claims:
             if claim.claimer != user.uuid:
                 continue
-            result = "win" if claim.winner == user.uuid else "loss"
+            result = "win" if claim.winner_uuid == user.uuid else "loss"
         return result
 
     def get_opponent_claim(self, user_uuid):
         opponent = self.get_opponent_by_uuid(user_uuid)
         return self.get_player_claim(opponent)
-        
 
-    def game_result(self, user_uuid:str, user_claim:str) -> str:
+    def game_result(self, user_uuid: str, user_claim: str) -> str:
         opponent = self.get_opponent_by_uuid(user_uuid)
         user = self.get_player_by_uuid(user_uuid)
 
-        opponent_claim = self.get_opponent_claim(user_uuid)
+        opponent_claim = self.get_player_claim(opponent)
         if user_claim == "draw":
             # draw logic
             if opponent_claim == "draw":
@@ -93,15 +98,18 @@ class Room:
         if opponent_claim is None:
             self.claims.append(Claim(user_claim, user_uuid))
             return "inconclusive"
+        
+        if opponent_claim == "bye":
+            return "success"
 
         user_claim = "win" if user_claim == user_uuid else "loss"
         if user_claim == "win" and opponent_claim == "loss":
-            user_temp_rating = user.rating 
+            user_temp_rating = user.rating
             user.game_result("win", opponent.rating, opponent.uuid)
             opponent.game_result("loss", user_temp_rating, user.uuid)
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
-            user_temp_rating = user.rating 
+            user_temp_rating = user.rating
             user.game_result("loss", opponent.rating, opponent.uuid)
             opponent.game_result("win", user_temp_rating, user.uuid)
             return "success"

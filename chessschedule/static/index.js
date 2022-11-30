@@ -141,11 +141,13 @@ const gameHandler = (socket, parent, userUUID) => ({
   uuid: userUUID,
   gameStarted: false,
   showLeaderboard: false,
+  gameSubmitted : false,
   pairings: [],
   playerPair: null,
   isBye: false,
   winSelected: null,
   init() {
+    this.$watch("winSelected", (a) => console.log(a));
     socket.on("pairings", (data) => {
       this.pairings = data.pairings;
       this.gameStarted = true;
@@ -186,6 +188,7 @@ const gameHandler = (socket, parent, userUUID) => ({
       player_uuid: parent.userUUID,
       result: this.winSelected, // the winner
     });
+    this.gameSubmitted = true;
   },
 });
 

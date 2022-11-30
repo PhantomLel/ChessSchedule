@@ -8,13 +8,13 @@
       <div class="buttons has-addons are-large is-centered">
         <!-- when a button is click, change winSelected to the uuid of the player selected then add the 'is-selected' class to the button -->
         <button
-          @click="winSelected = playerPair[0].name"
+          @click="winSelected = playerPair[0].uuid"
           x-text="playerPair[0].name"
           class="button"
           :class="winSelected == playerPair[0].uuid ? 'is-focused' : ''"
         ></button>
         <button
-          @click="winSelected = playerPair[1].name"
+          @click="winSelected = playerPair[1].uuid"
           x-text="playerPair[1].name"
           class="button"
           :class="winSelected == playerPair[1].uuid ? 'is-focused' : ''"
