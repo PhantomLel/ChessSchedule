@@ -192,6 +192,18 @@ const gameHandler = (socket, parent, userUUID) => ({
   },
 });
 
+const leaderboardHandler = (socket, parent) => ({
+  players: [],
+  init() {
+    socket.emit("get_leaderboard", { room_uuid: parent.roomUUID });
+
+    socket.on("leaderboard", (data) => {
+      this.players = data.rankings;
+    }
+    )
+  }
+});
+
 // DEFAULT BULMA IMPLEMENTATION FOR MODALS - CAN IGNORE
 // Functions to open and close a modal
 function openModal($el) {

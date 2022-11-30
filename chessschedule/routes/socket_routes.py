@@ -10,7 +10,7 @@ import json
 import random
 import secrets
 
-
+# ------------------- large line ------------------
 def get_room_code(code: str) -> Room:
     "Gets a room with the code provided"
     for room in rooms:
@@ -170,7 +170,7 @@ def game_result(data):
             # TODO make sure to make this actually return list of results. This is just placeholder
             emit("round_results", {"results": "something"})
     if success != "inconclusive":
-        emit(
+       emit(
             "game_result_res",
             {"status": 200 if success == "success" else 500},
             to=user.sid,
@@ -183,3 +183,9 @@ def game_result(data):
                 to=opponent.sid,
                 broadcast=False,
             )
+           
+@skt.on("get_leaderboard")
+def get_leaderboard(data):
+    room = get_room_uuid(data["room_uuid"]) 
+    emit("leaderboard", {"rankings": [{"name":"nans niemann", "score" : [1, 2, 45]}, {"name":"magnus hess", "score" : [45, 2, 1]}]}, to=room.uuid)
+  

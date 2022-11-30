@@ -8,13 +8,17 @@
       <h1 class="is-size-2" x-show="!gameStarted">
         Hey <span x-text="$router.params.name"></span>! See your name on the
         screen?
+       
       </h1>
       <template x-if="gameStarted && !showLeaderboard">
         {% include 'components/pairings.html' %}
       </template>
-      <template x-if="showLeaderboard">
+
+
+       <template x-if="showLeaderboard">
         {% include 'components/leaderboard.html' %}
       </template>
+    
     </div>
   </div>
 </section>
