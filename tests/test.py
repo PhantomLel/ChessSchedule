@@ -42,7 +42,7 @@ SKILL_DICT = {1: 100, 2: 250, 3: 500, 4: 700, 5: 900}
 
 
 class Player:
-    def __init__(self, name: str, skill: int, sid:str) -> None:
+    def __init__(self, name: str, skill: int, sid: str) -> None:
         self.name = name
         self.uuid = str(uuid.uuid1())
         self.rating = self.get_skill(int(skill))
@@ -83,17 +83,17 @@ class Player:
             self.players_played.get(opponent.uuid, 0) + 1
         )
 
-def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
-    " Returns a list of player (as dictionaries) tuple pairings. "
+
+def create_pairing(players: List[Player]) -> List[Tuple[dict, dict]]:
+    "Returns a list of player (as dictionaries) tuple pairings."
 
     pairs = []
     # if the number of players are odd then have one sit out for a round
-    if (len(players) % 2 != 0):
+    if len(players) % 2 != 0:
         players.sort(key=lambda x: x.sitout_num)
         sitout = players[0]
         sitout.sitout_num += 1
-        
-    
+
     players.sort(key=lambda x: x.rating, reverse=True)
 
     # find pairs with close elo and that have not played before
@@ -110,6 +110,7 @@ def create_pairing(players:List[Player]) -> List[Tuple[dict, dict]]:
     pairs.append((sitout))
     return pairs
 
+
 import random
 
 if __name__ == "__main__":
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     players = []
     for i in range(5):
         a = Player(str(i), 3, 1902409124)
-        a.rating = random.randint(100,1000)
+        a.rating = random.randint(100, 1000)
         players.append(a)
 
     print(create_pairing(players))

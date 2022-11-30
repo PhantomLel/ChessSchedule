@@ -7,7 +7,7 @@ SKILL_DICT = {1: 100, 2: 250, 3: 500, 4: 700, 5: 900}
 
 
 class Player:
-    def __init__(self, name: str, skill: int, sid:str) -> None:
+    def __init__(self, name: str, skill: int, sid: str) -> None:
         self.name = name
         self.uuid = str(uuid.uuid1())
         self.rating = self.get_skill(int(skill))
@@ -32,7 +32,7 @@ class Player:
             result = 1
         elif result == "draw":
             self.draws += 1
-            result = .5
+            result = 0.5
         elif result == "loss":
             self.losses += 1
             result = 0

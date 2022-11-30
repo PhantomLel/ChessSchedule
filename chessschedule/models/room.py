@@ -1,11 +1,12 @@
 from uuid import uuid1
-from typing import List, Dict,Tuple 
+from typing import List, Dict, Tuple
 from .player import Player
 from ..algos import pairing
 from random import randint
 from collections import namedtuple
 
 Claim = namedtuple("Claim", "winner_uuid claimer")
+
 
 class Room:
     def __init__(self, admin_uuid: str, admin_sid: str, session) -> None:
@@ -19,9 +20,9 @@ class Room:
         self.player_names = set()
         self.round = 1
         self.matches_left = None
-        self.current_pairings:List[Tuple[dict, dict]]
-        self.claims:List[Claim] = list()
-        self.draw_claims:List[str] = list()
+        self.current_pairings: List[Tuple[dict, dict]]
+        self.claims: List[Claim] = list()
+        self.draw_claims: List[str] = list()
 
     def add_player(self, player: Player) -> None:
         if player.name in self.player_names:
@@ -36,14 +37,14 @@ class Room:
         self.current_pairings = pairing.create_pairing(self.players.copy())
         self.matches_left = len(self.current_pairings)
         return self.current_pairings
-    
-    def get_player_by_uuid(self, user_uuid:str):
+
+    def get_player_by_uuid(self, user_uuid: str):
         for player in self.players:
             if player.uuid == user_uuid:
                 return player
         return None
 
-    def get_opponent_by_uuid(self, user_uuid:str) -> str:
+    def get_opponent_by_uuid(self, user_uuid: str) -> str:
         for pairing in self.current_pairings:
             if pairing[0]["uuid"] == user_uuid:
                 opponent_uuid = pairing[1]["uuid"]
@@ -70,9 +71,8 @@ class Room:
     def get_opponent_claim(self, user_uuid):
         opponent = self.get_opponent_by_uuid(user_uuid)
         return self.get_player_claim(opponent)
-        
 
-    def game_result(self, user_uuid:str, user_claim:str) -> str:
+    def game_result(self, user_uuid: str, user_claim: str) -> str:
         opponent = self.get_opponent_by_uuid(user_uuid)
         user = self.get_player_by_uuid(user_uuid)
 
@@ -94,12 +94,12 @@ class Room:
 
         user_claim = "win" if user_claim == user_uuid else "loss"
         if user_claim == "win" and opponent_claim == "loss":
-            user_temp_rating = user.rating 
+            user_temp_rating = user.rating
             user.game_result("win", opponent.rating, opponent.uuid)
             opponent.game_result("loss", user_temp_rating, user.uuid)
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
-            user_temp_rating = user.rating 
+            user_temp_rating = user.rating
             user.game_result("loss", opponent.rating, opponent.uuid)
             opponent.game_result("win", user_temp_rating, user.uuid)
             return "success"
