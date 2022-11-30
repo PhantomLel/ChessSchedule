@@ -176,13 +176,13 @@ def game_result(data):
             to=user.sid,
             broadcast=False,
         )
-        if opponent is not None: # when a user has a bye, their opponent is None
-            emit(
-                "game_result_res",
-                {"status": 200 if success == "success" else 500},
-                to=opponent.sid,
-                broadcast=False,
-            )
+    if opponent is not None: # when a user has a bye, their opponent is None
+        emit(
+            "game_result_res",
+            {"status": 200 if success == "success" else 500},
+            to=opponent.sid,
+            broadcast=False,
+        )
            
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
