@@ -33,7 +33,7 @@ class Room:
         return name in self.player_names
 
     def get_pairings(self):
-        self.current_pairings = pairing.create_pairing(self.players)
+        self.current_pairings = pairing.create_pairing(self.players.copy())
         self.matches_left = len(self.current_pairings)
         return self.current_pairings
     
@@ -41,19 +41,17 @@ class Room:
         for player in self.players:
             if player.uuid == user_uuid:
                 return player
-        else:
-            return None
+        return None
 
     def get_opponent_by_uuid(self, user_uuid:str) -> str:
-        opponent_uuid = None
         for pairing in self.current_pairings:
             if pairing[0]["uuid"] == user_uuid:
-                opponent_uuid = pairing[1]
+                opponent_uuid = pairing[1]["uuid"]
                 break
             elif pairing[1]["uuid"] == user_uuid:
-                opponent_uuid = pairing[0]
+                opponent_uuid = pairing[0]["uuid"]
                 break
-        return opponent_uuid
+        return self.get_player_by_uuid(opponent_uuid)
 
     def get_player_claim(self, user) -> str:
         if type(user) is str:
@@ -66,7 +64,7 @@ class Room:
         for claim in self.claims:
             if claim.claimer != user.uuid:
                 continue
-            result = "win" if claim.winner == user.uuid else "loss"
+            result = "win" if claim.winner_uuid == user.uuid else "loss"
         return result
 
     def get_opponent_claim(self, user_uuid):
@@ -78,7 +76,7 @@ class Room:
         opponent = self.get_opponent_by_uuid(user_uuid)
         user = self.get_player_by_uuid(user_uuid)
 
-        opponent_claim = self.get_opponent_claim(user_uuid)
+        opponent_claim = self.get_player_claim(opponent)
         if user_claim == "draw":
             # draw logic
             if opponent_claim == "draw":
