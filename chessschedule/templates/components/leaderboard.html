@@ -1,1 +1,36 @@
-PUT LEADERBOARD HERE
+<section x-data="leaderboardHandler(parent.socket, parent)">
+  <p class="title">testing</p>
+  <p class="title"><span x-text="players[0].name"></span></p>
+  <div class='columns is-mobile is-centered' style="justify-content: center;">
+    <div class='column is-full'>
+      <div>
+
+        <div>
+          <h1 class='title'>Leaderboard</h1>
+          <hr>
+        </div>
+        <table class='table is-fullwidth' style="background: #e2e1e0;">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Wins</th>
+            <th>Draws</th>
+            <th>Losses</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <template x-for="player in players">
+            <tr>
+              <td><span x-text="player.name"></span></td>
+              <td><span x-text="player.score[0]"></span></td>
+              <td><span x-text="player.score[1]"></span></td>
+              <td><span x-text="player.score[2]"></span></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+</section>
