@@ -103,12 +103,12 @@ def create(data):
         broadcast=False,
     )
     # debug
-    for i in range(24):
-        # random name and elo
-        a = Player("", 5, 5000)
-        a.rating = random.randint(100, 1000)
-        a.name = str(a.rating)
-        room.add_player(a)
+    # for i in range(24):
+    #     # random name and elo
+    #     a = Player("", 5, 5000)
+    #     a.rating = random.randint(100, 1000)
+    #     a.name = str(a.rating)
+    #     room.add_player(a)
     player_list_update(room)
 
 
@@ -148,7 +148,7 @@ def start_game(data):
     else:
         emit("start_game_res", {"status" :200}, broadcast=False)
     
-    emit("pairings", {"round":room.rounds, "pairings":room.get_pairings()}, to=room.uuid)
+    emit("pairings", {"round":room.round, "pairings":room.get_pairings()}, to=room.uuid)
 
 @skt.on("game_result")
 def game_result(data):
@@ -157,6 +157,11 @@ def game_result(data):
     user = room.get_player_by_uuid(data["player_uuid"])
     opponent = room.get_opponent_by_uuid(data["player_uuid"])
 
+    if success == "success":
+        room.matches_left -= 1
+        if room.matches_left <= 0:
+            # TODO make sure to make this actually return list of results. This is just placeholder
+            emit("round_results", {"results" : "something"})
     if success != "inconclusive":
         emit("game_result_res", {"status":200 if success=="success" else 500}, to=user.sid, broadcast=False)
         emit("game_result_res", {"status":200 if success=="success" else 500}, to=opponent.sid, broadcast=False)

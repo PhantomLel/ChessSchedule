@@ -1,0 +1,41 @@
+<div x-ref="selectModal" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-content">
+    <div class="box">
+      <h1 class="is-title-2">Who Won This Round?</h1>
+      <!-- selection buttons  -->
+      <div class="buttons has-addons are-large is-centered">
+        <!-- when a button is click, change winSelected to the uuid of the player selected then add the 'is-selected' class to the button -->
+        <button
+          @click="winSelected = playerPair[0].name"
+          x-text="playerPair[0].name"
+          class="button"
+          :class="winSelected == playerPair[0].uuid ? 'is-focused' : ''"
+        ></button>
+        <button
+          @click="winSelected = playerPair[1].name"
+          x-text="playerPair[1].name"
+          class="button"
+          :class="winSelected == playerPair[1].uuid ? 'is-focused' : ''"
+        ></button>
+        <button
+          @click="winSelected = 'draw'"
+          class="button"
+          :class="winSelected == 'draw' ? 'is-focused' : ''"
+        >Draw / Stalemate</button>
+      </div>
+      <br />
+      <!-- submit button -->
+      <button
+        @click="submitGameResult()"
+        x-show="winSelected !== null"
+        class="button is-primary is-medium"
+      >
+        Confirm Selection
+      </button>
+    </div>
+  </div>
+
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>

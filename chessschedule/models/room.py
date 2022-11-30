@@ -17,7 +17,8 @@ class Room:
         self.room_code = str(randint(1_000_000, 9_999_999))
         self.players: List[Player] = list()
         self.player_names = set()
-        self.rounds = 1
+        self.round = 1
+        self.matches_left = None
         self.current_pairings:List[Tuple[dict, dict]]
         self.claims:List[Claim] = list()
         self.draw_claims:List[str] = list()
@@ -33,6 +34,7 @@ class Room:
 
     def get_pairings(self):
         self.current_pairings = pairing.create_pairing(self.players)
+        self.matches_left = len(self.current_pairings)
         return self.current_pairings
     
     def get_player_by_uuid(self, user_uuid:str):
@@ -45,10 +47,10 @@ class Room:
     def get_opponent_by_uuid(self, user_uuid:str) -> str:
         opponent_uuid = None
         for pairing in self.current_pairings:
-            if pairing[0].uuid == user_uuid:
+            if pairing[0]["uuid"] == user_uuid:
                 opponent_uuid = pairing[1]
                 break
-            elif pairing[1].uuid == user_uuid:
+            elif pairing[1]["uuid"] == user_uuid:
                 opponent_uuid = pairing[0]
                 break
         return opponent_uuid
@@ -68,7 +70,7 @@ class Room:
         return result
 
     def get_opponent_claim(self, user_uuid):
-        opponent = get_opponent_by_uuid(user_uuid)
+        opponent = self.get_opponent_by_uuid(user_uuid)
         return self.get_player_claim(opponent)
         
 

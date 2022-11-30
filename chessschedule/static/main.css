@@ -40,7 +40,7 @@ html, body {
 .pair-tile {
     display: flex;
     justify-content: space-between;
-    background-color: rgb(243, 243, 243);
+    background-color: rgb(205, 205, 205);
     padding: 0.4em;
     margin-bottom: 1.5em;
     border-radius: 10px;
