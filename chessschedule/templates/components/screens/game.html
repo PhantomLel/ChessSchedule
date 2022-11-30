@@ -1,8 +1,7 @@
 <section
   x-data="gameHandler(parent.socket, parent, $router.params.userUUID)"
-  class="hero is-fullheight has-text-centered"
+  class="has-text-centered"
 >
-  <div class="hero-body">
     <div class="container">
       <!-- waiting room -->
       <h1 class="is-size-2" x-show="!gameStarted">
@@ -20,5 +19,4 @@
       </template>
     
     </div>
-  </div>
 </section>

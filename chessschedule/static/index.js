@@ -176,15 +176,20 @@ const gameHandler = (socket, parent, userUUID) => ({
 
     socket.on("game_result_res", (data) => {
       if (data.status === 200) {
-        this.showLeaderboard = true;
-      // checking who won failed :()
-      } else {
+        this.$refs.gameSubmitMsg.innerText = "Game Result Has Been Confirmed By Your Opponent";
+      }
+      else {
         console.warn("Win selection failed. Reprompting");
         // reset who is selected
         this.winSelected = null;
         this.gameSubmitted = false;
         openModal(this.$refs.selectModal);
       }
+    });
+
+    // this event indicates the end of this round
+    socket.on("round_results", (data) => {
+      this.showLeaderboard = true;
     });
   },
   submitGameResult() {
@@ -196,6 +201,8 @@ const gameHandler = (socket, parent, userUUID) => ({
       result: this.winSelected, // the winner
     });
     this.gameSubmitted = true;
+    // change the msg to indicate status
+    this.$refs.gameSubmitMsg.innerText = "Game Result Submitted. Waiting for other player.";
   },
 });
 

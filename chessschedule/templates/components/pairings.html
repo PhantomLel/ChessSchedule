@@ -8,7 +8,7 @@
     >
       Game Completed
     </button>
-    <h1 x-show="gameSubmitted && !isBye" class="is-size-2 mb-6">Game has been submitted!</h1>
+    <h1 x-ref="gameSubmitMsg" x-show="gameSubmitted && !isBye" class="is-size-2 mb-6"></h1>
     <h1 x-show="isBye" class="is-size-2 mb-6">Unlucky! Please go spectate the other matches.</h1>
     <!-- modal for selection -->
     {% include "components/win-selection-modal.html" %}
