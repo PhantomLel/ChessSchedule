@@ -44,6 +44,7 @@ def get_room_host_uuid(host_uuid: str) -> Room:
 
 
 def player_list_update(room: Room) -> None:
+    "Sends an event to the room's host to update current player list"
     data = {"players": [vars(player) for player in room.players]}
     emit("player_list_update", data, to=room.admin_sid)
 
@@ -53,11 +54,13 @@ def player_list_update(room: Room) -> None:
 
 @skt.on("connect")
 def connect(data):
+    "Initial socket connection route"
     emit("connect_res", {"Status": "Connected"}, broadcast=False)
 
 
 @skt.on("check_room")
 def check_room(data):
+    "Checks if a room exists, and returns room's uuid if it does"
     if get_room_code(data["code"]) != None:
         output = {"room_uuid": get_room_code(data["code"]).uuid}
     else:
@@ -68,6 +71,7 @@ def check_room(data):
 
 @skt.on("join_room")
 def join_comp(data):
+    "Socket route that enters a player client into a game"
     selected_room = get_room_code(data["code"])
     if selected_room is None:
         emit(
@@ -88,6 +92,7 @@ def join_comp(data):
 
 @skt.on("get_all_players")
 def get_all_players(data):
+    "Socket route that returns a list of all players"
     player_list_update(get_room_uuid(data["room_uuid"]))
 
 
@@ -97,6 +102,7 @@ rooms: List[Room] = list()
 
 @skt.on("create_room")
 def create(data):
+    "Socket route that creates a room"
     admin_uuid = str(uuid1())
     admin_sid = request.sid
     room = Room(admin_uuid, admin_sid, session)
@@ -118,6 +124,7 @@ def create(data):
 
 @skt.on("delete_room")
 def delete_room(data):
+    "Socket route that deletes a room"
     selected_room = get_room_uuid(data["room_uuid"]) or None
 
     if not selected_room:
@@ -145,6 +152,7 @@ def check_name(data):
 
 @skt.on("start_game")
 def start_game(data):
+    "Socket route that starts the game"
     room = get_room_host_uuid(data["host_uuid"])
     if room is None:
         emit("start_game_res", {"status": 500}, broadcast=False)
@@ -159,6 +167,7 @@ def start_game(data):
 
 @skt.on("game_result")
 def game_result(data):
+    "Socket route that players send to tell the server the game's result"
     room = get_room_uuid(data["room_uuid"])
     success = room.game_result(data["player_uuid"], data["result"])
     user = room.get_player_by_uuid(data["player_uuid"])
@@ -185,12 +194,14 @@ def game_result(data):
            
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
+    "Socket route that returns leaderboard information"
     room = get_room_uuid(data["room_uuid"]) 
     emit("leaderboard", room.leaders(10), to=room.uuid, broadcast=False)
 
 
 @skt.on("next_round")
 def next_round(data):
+    "Socket route that starts the next round of games"
     room = get_room_uuid(data["room_uuid"])
     if room.host_uuid != data["host_uuid"]:
         emit("next_round_res", {"status":502}, broadcast=False)
@@ -208,6 +219,7 @@ def next_round(data):
 
 @skt.on("end_game_host")
 def end_game(data):
+    "Socket route that ends the game of a room"
     room = get_room_uuid(data["uuid"])
     if data["host_uuid"] != room.host_uuid:
         # the odds of this are vanishlingly infinitesimal
