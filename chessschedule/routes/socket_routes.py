@@ -218,3 +218,4 @@ def end_game(data):
     emit("game_ended", {"results":room.results}, to=room.uuid, broadcast=True)
     # send game ended to host
     emit("game_ended", {"results":room.results}, broadcast=False)
+    rooms.remove(room)
