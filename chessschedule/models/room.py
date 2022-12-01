@@ -126,6 +126,11 @@ class Room:
             if opponent_claim == "draw":
                 # the players draw
                 self.results.append([user.name, opponent.name, "draw"])
+                user.draws += 1
+                opponent.draws += 1
+                user_temp_rating = user.rating
+                user.game_result("draw", opponent.rating, opponent.uuid)
+                opponent.game_result("draw", user_temp_rating, user.uuid)  
                 return "success"
             elif opponent_claim is None:
                 self.draw_claims.append(user_uuid)
