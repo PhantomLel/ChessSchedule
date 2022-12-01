@@ -25,6 +25,14 @@ class Room:
         self.draw_claims: List[str] = list()
         self.results = list()
 
+    def reset_round(self):
+        self.results = list()
+        self.draw_claims = list()
+        self.claims = list()
+        self.current_pairings = list()
+        self.matches_left = None
+        self.round += 1
+
     def leaders(self, num:int):
         if num > len(self.players):
             num = len(self.players)

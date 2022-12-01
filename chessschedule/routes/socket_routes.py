@@ -153,7 +153,7 @@ def start_game(data):
         emit("start_game_res", {"status": 200}, broadcast=False)
 
     emit(
-        "pairings", {"round": room.round, "pairings": room.get_pairings()}, to=room.uuid
+        "pairings", {"round": room.round, "pairings": room.get_pairings()}, to=room.uuid, broadcast=True
     )
 
 
@@ -167,7 +167,7 @@ def game_result(data):
     if success == "success":
         room.matches_left -= 1
         if room.matches_left <= 0:
-            emit("round_results", {"results": room.results}, to=room.uuid)
+            emit("round_results", {"results": room.results}, to=room.uuid, broadcast=True)
     if success != "inconclusive":
         emit(
             "game_result_res",
@@ -186,4 +186,35 @@ def game_result(data):
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
     room = get_room_uuid(data["room_uuid"]) 
-    emit("leaderboard", room.leaders(10), to=room.uuid)
+    emit("leaderboard", room.leaders(10), to=room.uuid, broadcast=False)
+
+
+@skt.on("next_round")
+def next_round(data):
+    room = get_room_uuid(data["room_uuid"])
+    if room.host_uuid != data["host_uuid"]:
+        emit("next_round_res", {"status":502}, broadcast=False)
+        return
+    
+    if data["ensure_match_completions"] and room.matches_left != 0:
+        emit("next_round_res", {"status":501}, broadcast=False)
+        return
+
+    room.reset_round()
+    emit("next_room_res", {"status":200}, broadcast=False)
+    emit(
+        "pairings", {"round": room.round, "pairings": room.get_pairings()}, to=room.uuid, broadcast=True
+    )
+
+@skt.on("end_game_host")
+def end_game(data):
+    room = get_room_uuid(data["uuid"])
+    if data["host_uuid"] != room.host_uuid:
+        # the odds of this are vanishlingly infinitesimal
+        emit("error", {"status":502}, broadcast=False)
+        return
+    
+    # send game ended to players
+    emit("game_ended", {"results":room.results}, to=room.uuid, broadcast=True)
+    # send game ended to host
+    emit("game_ended", {"results":room.results}, broadcast=False)
