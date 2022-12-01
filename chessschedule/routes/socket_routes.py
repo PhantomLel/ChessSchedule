@@ -48,6 +48,20 @@ def player_list_update(room: Room) -> None:
     data = {"players": [vars(player) for player in room.players]}
     emit("player_list_update", data, to=room.admin_sid)
 
+def emit_pairings(room: Room) -> None:
+    pairings = room.get_pairings()
+    emit(
+        "pairings",
+        {"round": room.round, "pairings": pairings},
+        to=room.uuid,
+        broadcast=True,
+    )
+    emit(
+        "pairings",
+        {"round": room.round, "pairings": pairings},
+        to=room.admin.sid,
+        broadcast=False,
+    )
 
 # ------------------- big line ------------------
 
@@ -160,12 +174,7 @@ def start_game(data):
     else:
         emit("start_game_res", {"status": 200}, broadcast=False)
 
-    emit(
-        "pairings",
-        {"round": room.round, "pairings": room.get_pairings()},
-        to=room.uuid,
-        broadcast=True,
-    )
+    emit_pairings(start_game(room))
 
 
 @skt.on("game_result")
@@ -219,12 +228,8 @@ def next_round(data):
 
     room.reset_round()
     emit("next_room_res", {"status": 200}, broadcast=False)
-    emit(
-        "pairings",
-        {"round": room.round, "pairings": room.get_pairings()},
-        to=room.uuid,
-        broadcast=True,
-    )
+    emit_pairings(room)
+    
 
 
 @skt.on("end_game_host")
