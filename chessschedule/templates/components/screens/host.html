@@ -1,4 +1,38 @@
-<section>
-    Game has started 
-    <span x-text="$router.params.roomUUID"></span>
+<section x-data="hostHandler(parent.socket, parent, $router.params.roomUUID)">
+  <div style="min-height: 50rem">
+  </div>
+  <div style="min-height: 50rem">
+    <div class="columns is-centered">
+      <div class="column is-half">
+        <div class="pairings box mx-2">
+          <template x-for="pair in pairings">
+            <div>
+              <!-- even amount of players -->
+              <template x-if="pair.length == 2">
+                <h1 class="pair-tile">
+                  <span x-text="pair[0].name"></span>
+                  <span x-text="pair[1].name"></span>
+                </h1>
+              </template>
+              <!-- uneven amount of players -->
+              <template x-if="pair.length == 1">
+                <h1 class="pair-tile">
+                  <span x-text="pair[0].name"></span>
+                  <span>Bye - Sitout :(</span>
+                </h1>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <div class="column is-half">
+        {% include 'components/leaderboard.html' %}
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button @click="nextRound()" class="button is-primary">Next Round</button>
+    <button @click="endGame()" class="button is-danger">End Game</button>
+  </div>
 </section>

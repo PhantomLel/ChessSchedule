@@ -125,7 +125,7 @@ class Room:
             # draw logic
             if opponent_claim == "draw":
                 # the players draw
-                results.append([user.name, opponent.name, "draw"])
+                self.results.append([user.name, opponent.name, "draw"])
                 return "success"
             elif opponent_claim is None:
                 self.draw_claims.append(user_uuid)
@@ -148,8 +148,7 @@ class Room:
             user_temp_rating = user.rating
             user.game_result("win", opponent.rating, opponent.uuid)
             opponent.game_result("loss", user_temp_rating, user.uuid)
-            # store game result
-            results.append([user.name, opponent.name, user.name])
+            self.results.append([user.name, opponent.name, user.name])
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
             # update ratings
