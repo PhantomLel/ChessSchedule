@@ -97,9 +97,16 @@ rooms: List[Room] = list()
 
 @skt.on("create_room")
 def create(data):
-    admin_uuid = str(uuid1())
+    admin_uuid = str(uuid1()) 
     admin_sid = request.sid
-    room = Room(admin_uuid, admin_sid, session)
+    while(1):
+        room = Room(admin_uuid, admin_sid, session)
+        for r in rooms:
+            if(r.room_code == room.room_code): 
+                del room
+                break
+        break
+                
     rooms.append(room)
     emit(
         "create_room_res",
