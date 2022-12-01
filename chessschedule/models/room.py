@@ -37,7 +37,7 @@ class Room:
         if num > len(self.players):
             num = len(self.players)
         leaders =  sorted(self.players, key=lambda x:x.rating)[:num]
-        return {"rankings":[{"name":p.name, "score":[p.wins, p.draws, p.losses]} for p in leaders]}
+        return {"rankings":[{"name":p.name, "score":[p.wins, p.draws, p.losses, p.rating]} for p in leaders]}
 
     def add_player(self, player: Player) -> None:
         if player.name in self.player_names:
