@@ -141,7 +141,7 @@ const gameHandler = (socket, parent, userUUID) => ({
   uuid: userUUID,
   gameStarted: false,
   showLeaderboard: false,
-  gameSubmitted : false,
+  gameSubmitted: false,
   pairings: [],
   playerPair: null,
   isBye: false,
@@ -151,7 +151,8 @@ const gameHandler = (socket, parent, userUUID) => ({
     socket.on("pairings", (data) => {
       this.pairings = data.pairings;
       this.gameStarted = true;
-      this.isBye = false; // reset isBye to false then check in for loop if it is a bye
+      // reset to defaults
+      this.resetVars();
       // go through every pair and find the one that is the current player's
       for (let pair of this.pairings) {
         parentLoop: for (let player of pair) {
@@ -173,12 +174,11 @@ const gameHandler = (socket, parent, userUUID) => ({
       this.pairings.unshift(this.playerPair);
       addModalListeners(); // add the closing events such as pressing escape, clicking the close button, or clicking anywhere other than the modal
     });
-
     socket.on("game_result_res", (data) => {
       if (data.status === 200) {
-        this.$refs.gameSubmitMsg.innerText = "Game Result Has Been Confirmed By Your Opponent";
-      }
-      else {
+        this.$refs.gameSubmitMsg.innerText =
+          "Game Result Has Been Confirmed By Your Opponent";
+      } else {
         console.warn("Win selection failed. Reprompting");
         // reset who is selected
         this.winSelected = null;
@@ -202,19 +202,63 @@ const gameHandler = (socket, parent, userUUID) => ({
     });
     this.gameSubmitted = true;
     // change the msg to indicate status
-    this.$refs.gameSubmitMsg.innerText = "Game Result Submitted. Waiting for other player.";
+    this.$refs.gameSubmitMsg.innerText =
+      "Game Result Submitted. Waiting for other player.";
   },
+  // reset all the vars to default
+  resetVars() {
+    this.isBye = false;
+    this.showLeaderboard = false;
+    this.gameSubmitted = false;
+    this.winSelected = null;
+    this.playerPair = null;
+  }
+});
+
+const hostHandler = (socket, parent) => ({
+  pairings: [],
+  init() {
+    socket.on("pairings", (data) => {
+      this.pairings = data.pairings;
+    });
+
+    // response to end_game_host
+    socket.on("game_ended", (data) => {
+      // go to results page
+      this.$router.push("/results/" + JSON.stringify(data.results));
+    });
+  },
+  nextRound() {
+    socket.emit("next_round", {
+      room_uuid : parent.roomUUID,
+      host_uuid : parent.hostUUID,
+      // TODO ask the host if they want to do this or not
+      ensure_match_completions : true
+    });
+  },
+  endGame() {
+    socket.emit("end_game_host", {
+      room_uuid: parent.roomUUID,
+      host_uuid: parent.hostUUID,
+    });
+  },
+});
+
+const resultsPage = (results) => ({
+  results: results,
+  init() {},
 });
 
 const leaderboardHandler = (socket, parent) => ({
   players: [],
   init() {
-    socket.emit("get_leaderboard", { room_uuid: parent.roomUUID });
-
     socket.on("leaderboard", (data) => {
       this.players = data.rankings;
-    }
-    )
+    });
+    this.getLeaderboard();
+  },
+  getLeaderboard() {
+    socket.emit("get_leaderboard", { room_uuid: parent.roomUUID });
   }
 });
 
