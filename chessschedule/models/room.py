@@ -112,6 +112,16 @@ class Room:
         opponent = self.get_opponent_by_uuid(user_uuid)
         return self.get_player_claim(opponent)
 
+    def remove_claim(self, uuid) -> None:
+        "Removes claims made by the player with the provided uuid"
+        for claim in self.claims:
+            if claim.claimer == uuid:
+                self.claims.remove(claim)
+        for claim in self.draw_claims:
+            if claim == uuid:
+                self.draw_claims.remove(claim)
+
+
     def game_result(self, user_uuid: str, user_claim: str) -> str:
         """
         Function that takes user input of the result of a game (win/lose/draw)
@@ -135,7 +145,7 @@ class Room:
                 self.draw_claims.append(user_uuid)
                 return "inconclusive"
             else:
-                self.claims.remove(opponent_claim)
+                self.remove_claim(opponent.uuid)
                 return "failure"
 
         if opponent_claim is None:
@@ -162,5 +172,5 @@ class Room:
             self.results.append([user.name, opponent.name, opponent.name])
             return "success"
         else:
-            self.claims.remove(opponent_claim)
+            self.remove_claim(opponent.uuid)
             return "failure"
