@@ -38,10 +38,12 @@ class Room:
         "Gives a list of the top players and their win/draw/loss record"
         if num > len(self.players):
             num = len(self.players)
+        leaders =  sorted(self.players, key=lambda x:x.rating)[:num]
+        return {"rankings":[{"name":p.name, "score":[p.wins, p.draws, p.losses, p.rating]} for p in leaders]}
         leaders = sorted(self.players, key=lambda x: x.rating)[:num]
         return {
             "rankings": [
-                {"name": p.name, "score": [p.wins, p.draws, p.losses]} for p in leaders
+                {"name": p.name, "score": [p.wins, p.draws, p.losses, p.rating]} for p in leaders
             ]
         }
 
