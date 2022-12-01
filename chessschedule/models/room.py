@@ -128,7 +128,7 @@ class Room:
             if opponent_claim == "draw":
                 # the players draw
                 user.rating, opponent.rating = elo.change_rating_rating(user.rating, opponent.rating, [.5,.5])
-                ser.game_result("draw", opponent.uuid)
+                user.game_result("draw", opponent.uuid)
                 opponent.game_result("draw", user.uuid)
                 return "success"
             elif opponent_claim is None:
