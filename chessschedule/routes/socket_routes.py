@@ -167,8 +167,7 @@ def game_result(data):
     if success == "success":
         room.matches_left -= 1
         if room.matches_left <= 0:
-            # TODO make sure to make this actually return list of results. This is just placeholder
-            emit("round_results", {"results": "something"}, to=room.uuid)
+            emit("round_results", {"results": room.results}, to=room.uuid)
     if success != "inconclusive":
         emit(
             "game_result_res",

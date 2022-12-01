@@ -23,6 +23,7 @@ class Room:
         self.current_pairings: List[Tuple[dict, dict]]
         self.claims: List[Claim] = list()
         self.draw_claims: List[str] = list()
+        self.results = list()
 
     def leaders(self, num:int):
         if num > len(self.players):
@@ -94,6 +95,7 @@ class Room:
             # draw logic
             if opponent_claim == "draw":
                 # the players draw
+                results.append([user.name, opponent.name, "draw"])
                 return "success"
             elif opponent_claim is None:
                 self.draw_claims.append(user_uuid)
@@ -106,6 +108,7 @@ class Room:
             return "inconclusive"
         
         if opponent_claim == "bye":
+            results.append([user.name])
             return "success"
 
         user_claim = "win" if user_claim == user_uuid else "loss"
@@ -113,11 +116,13 @@ class Room:
             user_temp_rating = user.rating
             user.game_result("win", opponent.rating, opponent.uuid)
             opponent.game_result("loss", user_temp_rating, user.uuid)
+            results.append([user.name, opponent.name, user.name])
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
             user_temp_rating = user.rating
             user.game_result("loss", opponent.rating, opponent.uuid)
             opponent.game_result("win", user_temp_rating, user.uuid)
+            results.append([user.name, opponent.name, opponent.name])
             return "success"
         else:
             return "failure"
