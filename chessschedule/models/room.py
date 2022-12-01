@@ -135,7 +135,7 @@ class Room:
                 self.draw_claims.append(user_uuid)
                 return "inconclusive"
             else:
-                claims.remove(opponent_claim)
+                self.claims.remove(opponent_claim)
                 return "failure"
 
         if opponent_claim is None:
@@ -143,7 +143,7 @@ class Room:
             return "inconclusive"
 
         if opponent_claim == "bye":
-            results.append([user.name])
+            self.results.append([user.name])
             return "success"
 
         user_claim = "win" if user_claim == user_uuid else "loss"
@@ -162,5 +162,5 @@ class Room:
             self.results.append([user.name, opponent.name, opponent.name])
             return "success"
         else:
-            claims.remove(opponent_claim)
+            self.claims.remove(opponent_claim)
             return "failure"
