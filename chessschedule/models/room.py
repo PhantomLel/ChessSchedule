@@ -34,12 +34,16 @@ class Room:
         self.matches_left = None
         self.round += 1
 
-    def leaders(self, num:int):
+    def leaders(self, num: int):
         "Gives a list of the top players and their win/draw/loss record"
         if num > len(self.players):
             num = len(self.players)
-        leaders =  sorted(self.players, key=lambda x:x.rating)[:num]
-        return {"rankings":[{"name":p.name, "score":[p.wins, p.draws, p.losses]} for p in leaders]}
+        leaders = sorted(self.players, key=lambda x: x.rating)[:num]
+        return {
+            "rankings": [
+                {"name": p.name, "score": [p.wins, p.draws, p.losses]} for p in leaders
+            ]
+        }
 
     def add_player(self, player: Player) -> None:
         "Adds a player object to the game"
@@ -69,7 +73,8 @@ class Room:
         "Gets the opponent of the player that has provided uuid"
         opponent_uuid = None
         for pairing in self.current_pairings:
-            if len(pairing) == 1: continue # continue on bye
+            if len(pairing) == 1:
+                continue  # continue on bye
             if pairing[0]["uuid"] == user_uuid:
                 opponent_uuid = pairing[1]["uuid"]
                 break
@@ -77,7 +82,9 @@ class Room:
                 opponent_uuid = pairing[0]["uuid"]
                 break
 
-        if opponent_uuid is None: # opponent is none, can happen when player has a bye or if something went wrong
+        if (
+            opponent_uuid is None
+        ):  # opponent is none, can happen when player has a bye or if something went wrong
             return None
         return self.get_player_by_uuid(opponent_uuid)
 
@@ -130,7 +137,7 @@ class Room:
         if opponent_claim is None:
             self.claims.append(Claim(user_claim, user_uuid))
             return "inconclusive"
-        
+
         if opponent_claim == "bye":
             results.append([user.name])
             return "success"

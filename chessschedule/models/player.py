@@ -19,7 +19,7 @@ class Player:
         self.sitout_num = 0
 
     def eval_score(self):
-        " Calculates a win/draw/loss record as one float.  "
+        "Calculates a win/draw/loss record as one float."
         return self.wins + self.draws / 2 - self.losses
 
     def get_skill(self, assessment: int):
