@@ -1,7 +1,9 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500&display=swap');
 
 html, body {
-  background: #e2e1e0;
+  background: #e9e7e7;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 .table th {
@@ -88,4 +90,8 @@ html, body {
   position: absolute;
   bottom: 0;
   margin: 1rem;
+}
+
+.tr th {
+  font-weight: lighter !important;
 }
