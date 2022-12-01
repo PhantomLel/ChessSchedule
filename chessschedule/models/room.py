@@ -1,7 +1,7 @@
 from uuid import uuid1
 from typing import List, Dict, Tuple
 from .player import Player
-from ..algos import pairing
+from ..algos import pairing, elo
 from random import randint
 from collections import namedtuple
 
@@ -127,12 +127,9 @@ class Room:
             # draw logic
             if opponent_claim == "draw":
                 # the players draw
-                self.results.append([user.name, opponent.name, "draw"])
-                user.draws += 1
-                opponent.draws += 1
-                user_temp_rating = user.rating
-                user.game_result("draw", opponent.rating, opponent.uuid)
-                opponent.game_result("draw", user_temp_rating, user.uuid)  
+                user.rating, opponent.rating = elo.change_rating_rating(user.rating, opponent.rating, [.5,.5])
+                ser.game_result("draw", opponent.uuid)
+                opponent.game_result("draw", user.uuid)
                 return "success"
             elif opponent_claim is None:
                 self.draw_claims.append(user_uuid)
@@ -152,18 +149,17 @@ class Room:
         user_claim = "win" if user_claim == user_uuid else "loss"
         if user_claim == "win" and opponent_claim == "loss":
             # update ratings
-            user_temp_rating = user.rating
-            user.game_result("win", opponent.rating, opponent.uuid)
-            opponent.game_result("loss", user_temp_rating, user.uuid)
+            user.rating, opponent.rating = elo.change_rating_rating(user.rating, opponent.rating, [1,0])
+            user.game_result("win", opponent.uuid)
+            opponent.game_result("loss", user.uuid)
             self.results.append([user.name, opponent.name, user.name])
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
             # update ratings
-            user_temp_rating = user.rating
-            user.game_result("loss", opponent.rating, opponent.uuid)
-            opponent.game_result("win", user_temp_rating, user.uuid)
-            # store game result
-            results.append([user.name, opponent.name, opponent.name])
+            user.rating, opponent.rating = elo.change_rating_rating(user.rating, opponent.rating, [0,1])
+            user.game_result("loss", opponent.uuid)
+            opponent.game_result("win", user.uuid)
+            self.results.append([user.name, opponent.name, opponent.name])
             return "success"
         else:
             claims.remove(opponent_claim)

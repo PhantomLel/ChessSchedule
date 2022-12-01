@@ -21,11 +21,9 @@ def change_rating(player1_rating, player2_rating, game_result) -> Tuple[int, int
         1 + 10 ** ((player2_rating - player1_rating) / ELO_COEFFICIENT)
     )
     new_rating1 = round(player1_rating + K_FACTOR * (game_result - expected_score))
-    # # Player 2
-    # expected_score = 1 / (
-    #     1 + 10 ** ((player1_rating - player2_rating) / ELO_COEFFICIENT)
-    # )
-    # new_rating2 = round(player2_rating + K_FACTOR * (game_result[1] - expected_score))
-
-    # return (new_rating1, new_rating2)
-    return new_rating1
+    # Player 2
+    expected_score = 1 / (
+        1 + 10 ** ((player1_rating - player2_rating) / ELO_COEFFICIENT)
+    )
+    new_rating2 = round(player2_rating + K_FACTOR * (game_result[1] - expected_score))
+    return (new_rating1, new_rating2) #return new_rating1

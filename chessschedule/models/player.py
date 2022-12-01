@@ -29,24 +29,17 @@ class Player:
             )
         return SKILL_DICT[assessment]
 
-    def game_result(self, result: str, opponent_rating, opponent_uuid) -> None:
+    def game_result(self, result: str, opponent_uuid:str) -> None:
         "Updates nessesary player information after a game is played, based on the result."
         if result == "win":
             self.wins += 1
-            result = 1
         elif result == "draw":
             self.draws += 1
-            result = 0.5
         elif result == "loss":
             self.losses += 1
-            result = 0
-        else:
-            raise Exception(
-                f'Malformed Request: Invalid result string "{result}" - result must be "win", "draw", or "loss"'
-            )
 
         # update elo
-        self.rating = change_rating(self.rating, opponent_rating, result)
+        self.rating = new_rating
         # keep track of game as being played
         self.players_played[opponent_uuid] = (
             self.players_played.get(opponent_uuid, 0) + 1
