@@ -187,4 +187,4 @@ def game_result(data):
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
     room = get_room_uuid(data["room_uuid"]) 
-    emit("leaderboard", room.leaders(3), to=room.uuid)
+    emit("leaderboard", room.leaders(10), to=room.uuid)

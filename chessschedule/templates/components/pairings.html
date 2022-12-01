@@ -1,18 +1,22 @@
 <div class="columns is-centered">
   <div class="column">
-    <!-- only show button if it is not a bye -->
-    <button
-      x-show="!isBye && !gameSubmitted"
-      @click="$refs.selectModal.classList.add('is-active')"
-      class="button is-primary is-large mb-6"
-    >
-      Game Completed
-    </button>
-    <h1 x-ref="gameSubmitMsg" x-show="gameSubmitted && !isBye" class="is-size-2 mb-6"></h1>
-    <h1 x-show="isBye" class="is-size-2 mb-6">Unlucky! Please go spectate the other matches.</h1>
+    <!-- container for the game completed button and game messages -->
+    <div class="my-6">
+      <!-- only show button if it is not a bye -->
+      <button
+        x-show="!isBye && !gameSubmitted"
+        @click="$refs.selectModal.classList.add('is-active')"
+        class="button is-primary is-large"
+      >
+        Game Completed
+      </button>
+      <h1 x-ref="gameSubmitMsg" x-show="gameSubmitted && !isBye" class="is-size-2"></h1>
+      <!-- show this message if it is a bye -->
+      <h1 x-show="isBye" class="is-size-2">Unlucky! Please go spectate the other matches.</h1>
+    </div>
     <!-- modal for selection -->
     {% include "components/win-selection-modal.html" %}
-    <div class="pairings box">
+    <div class="pairings box mx-2">
       <template x-for="pair in pairings">
         <div>
           <!-- even amount of players -->
