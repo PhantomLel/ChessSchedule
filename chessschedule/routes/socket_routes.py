@@ -42,6 +42,7 @@ def player_list_update(room: Room) -> None:
     data = {"players": [vars(player) for player in room.players]}
     emit("player_list_update", data, to=room.admin_sid)
 
+
 def emit_pairings(room: Room) -> None:
     pairings = room.get_pairings()
     emit(
@@ -56,6 +57,7 @@ def emit_pairings(room: Room) -> None:
         to=room.admin_sid,
         broadcast=False,
     )
+
 
 # ------------------- big line ------------------
 
@@ -113,14 +115,14 @@ def create(data):
     "Socket route that creates a room"
     admin_uuid = str(uuid1())
     admin_sid = request.sid
-    while(1):
+    while 1:
         room = Room(admin_uuid, admin_sid, session)
         for r in rooms:
-            if(r.room_code == room.room_code): 
+            if r.room_code == room.room_code:
                 del room
                 break
         break
-                
+
     rooms.append(room)
     emit(
         "create_room_res",
@@ -230,7 +232,6 @@ def next_round(data):
     room.reset_round()
     emit("next_room_res", {"status": 200}, broadcast=False)
     emit_pairings(room)
-    
 
 
 @skt.on("end_game_host")
@@ -247,3 +248,41 @@ def end_game(data):
     # send game ended to host
     emit("game_ended", {"results": room.leaders(10)}, broadcast=False)
     rooms.remove(room)
+
+
+@skt.on("reconnect_player")
+def reconnect_player(data):
+    room = get_room_uuid(data["uuid"])
+    if room is None:
+        emit(
+            "reconnect_player_res",
+            {status: 500, error: "No room with provided code exists"},
+            broadcast=False,
+        )
+        return
+
+    room.get_player_by_uuid(data["player_uuid"])
+    player.sid = request.sid
+    join_room(room.uuid)
+    emit("reconnect_player_res", {"status": 200}, broadcast=False)
+
+
+@skt.on("reconnect_host")
+def reconnect_host(data):
+    room = get_room_uuid(data["room_uuid"])
+    if room is None:
+        emit(
+            "reconnect_host_res",
+            {"status": 500, "error": "No room with provided code exists"},
+            broadcast=False,
+        )
+        return
+    if room.admin_uuid != data["host_uuid"]:
+        emit(
+            "reconnect_host_res",
+            {"status": 500, "error": "Host verification failed"},
+            broadcast=False,
+        )
+        return
+    room.admin_sid = request.sid
+    emit("reconnect_host_res", {"status": 200}, broadcast=False)

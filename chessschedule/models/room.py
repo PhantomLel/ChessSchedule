@@ -42,7 +42,8 @@ class Room:
         leaders = sorted(self.players, key=lambda x: x.rating, reverse=True)[:num]
         return {
             "rankings": [
-                {"name": p.name, "score": [p.wins, p.draws, p.losses, p.rating]} for p in leaders
+                {"name": p.name, "score": [p.wins, p.draws, p.losses, p.rating]}
+                for p in leaders
             ]
         }
 
@@ -120,7 +121,6 @@ class Room:
             if claim == uuid:
                 self.draw_claims.remove(claim)
 
-
     def game_result(self, user_uuid: str, user_claim: str) -> str:
         """
         Function that takes user input of the result of a game (win/lose/draw)
@@ -136,7 +136,9 @@ class Room:
             # draw logic
             if opponent_claim == "draw":
                 # the players draw
-                user.rating, opponent.rating = elo.change_rating(user.rating, opponent.rating, [.5,.5])
+                user.rating, opponent.rating = elo.change_rating(
+                    user.rating, opponent.rating, [0.5, 0.5]
+                )
                 user.game_result("draw", opponent.uuid)
                 opponent.game_result("draw", user.uuid)
                 return "success"
@@ -158,14 +160,18 @@ class Room:
         user_claim = "win" if user_claim == user_uuid else "loss"
         if user_claim == "win" and opponent_claim == "loss":
             # update ratings
-            user.rating, opponent.rating = elo.change_rating(user.rating, opponent.rating, [1,0])
+            user.rating, opponent.rating = elo.change_rating(
+                user.rating, opponent.rating, [1, 0]
+            )
             user.game_result("win", opponent.uuid)
             opponent.game_result("loss", user.uuid)
             self.results.append([user.name, opponent.name, user.name])
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
             # update ratings
-            user.rating, opponent.rating = elo.change_rating(user.rating, opponent.rating, [0,1])
+            user.rating, opponent.rating = elo.change_rating(
+                user.rating, opponent.rating, [0, 1]
+            )
             user.game_result("loss", opponent.uuid)
             opponent.game_result("win", user.uuid)
             self.results.append([user.name, opponent.name, opponent.name])
