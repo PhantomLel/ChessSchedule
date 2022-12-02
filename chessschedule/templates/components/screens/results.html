@@ -1,5 +1,41 @@
-<section x-data="resultsPage()">
-    <template>
-
-    </template>
-</section> 
+<section x-data="{ results : JSON.parse(decodeURI($router.params.results)).rankings}">
+  <div
+    class="columns is-centered mx-3"
+    style="justify-content: center"
+  >
+    <div class="column is-full-mobile is-two-thirds">
+      <div class="box my-6 leaderboard has-text-centered">
+        <div>
+          <h1 class="title">Final Game Results</h1>
+          <hr />
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Wins</th>
+              <th>Draws</th>
+              <th>Losses</th>
+              <th>ELO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="result in results">
+              <tr>
+                <td><span x-text="result.name"></span></td>
+                <td><span x-text="result.score[0]"></span></td>
+                <td><span x-text="result.score[1]"></span></td>
+                <td><span x-text="result.score[2]"></span></td>
+                <td><span x-text="result.score[3]"></span></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <button @click="() => {
+            navigator.clipboard.writeText(location.href); 
+            $el.innerText = 'Link Copied!';
+        }" class="button is-link is-medium my-4">Share Results</button>
+      </div>
+    </div>
+  </div>
+</section>

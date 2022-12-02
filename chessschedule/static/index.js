@@ -249,10 +249,6 @@ const hostHandler = (socket, parent) => ({
   },
 });
 
-const resultsPage = (results) => ({
-  results: results,
-  init() {},
-});
 
 const leaderboardHandler = (socket, parent) => ({
   players: [],
