@@ -264,7 +264,7 @@ def reconnect_player(data):
     room.get_player_by_uuid(data["player_uuid"])
     player.sid = request.sid
     join_room(room.uuid)
-    emit("reconnect_player_res", {"status": 200}, broadcast=False)
+    emit("reconnect_player_res", {"status": 200, "state":room.state()}, broadcast=False)
 
 
 @skt.on("reconnect_host")
@@ -285,4 +285,4 @@ def reconnect_host(data):
         )
         return
     room.admin_sid = request.sid
-    emit("reconnect_host_res", {"status": 200}, broadcast=False)
+    emit("reconnect_host_res", {"status": 200, "state":room.state()}, broadcast=False)

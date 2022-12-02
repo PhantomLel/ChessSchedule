@@ -24,6 +24,15 @@ class Room:
         self.claims: List[Claim] = list()
         self.draw_claims: List[str] = list()
         self.results = list()
+        self.started = False
+
+    def state(self):
+        "Returns the current game state."
+        if not self.started:
+            return "wait"
+        if matches_left:
+            return "pairings"
+        return "leaderboard"
 
     def reset_round(self):
         "Resets all attributes of a room that are temporary for a round"
