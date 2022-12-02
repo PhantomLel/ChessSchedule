@@ -247,3 +247,27 @@ def end_game(data):
     # send game ended to host
     emit("game_ended", {"results": room.leaders(10)}, broadcast=False)
     rooms.remove(room)
+
+@skt.on("reconnect_player")
+def reconnect_player(data):
+    room = get_room_uuid(data["uuid"])
+    if room is None:
+        emit("reconnect_player_res", {status:500, error:"No room with provided code exists"}, broadcast=False)
+        return
+    
+    room.get_player_by_uuid(data["player_uuid"])
+    player.sid = request.sid
+    join_room(room.uuid)
+    emit("reconnect_player_res", {"status":200}, broadcast=False)
+
+@skt.on("reconnect_host")
+def reconnect_host(data):
+    room = get_room_uuid(data["room_uuid"])
+    if room is None:
+        emit("reconnect_host_res", {"status":500, "error":"No room with provided code exists"}, broadcast=False)
+        return
+    if room.admin_uuid != data["host_uuid"]:
+        emit("reconnect_host_res", {"status":500, "error":"Host verification failed"}, broadcast=False)
+        return
+    room.admin_sid = request.sid
+    emit("reconnect_host_res", {"status":200}, broadcast=False)
