@@ -102,12 +102,19 @@ html, body {
   font-size: 1.5em;
 }
 
+.leaderboard.admin .table {
+  font-size: 1.3em;
+}
+
 .leaderboard h1 {
   font-style: bold;
 }
 @media screen and (max-width: 760px) {
   .leaderboard .table {
     font-size: 0.8em;
+  }
+  .leaderboard.admin .table {
+    font-size: 1em;
   }
   .leaderboard h1 {
     font-size: 1.6em;

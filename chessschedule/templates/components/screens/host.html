@@ -1,6 +1,7 @@
 <section x-data="hostHandler(parent.socket, parent, $router.params.roomUUID)">
-  <div class="has-text-centered">
-    <div class="pairings box mx-2" style="width:30rem ;">
+  <div class="columns is-centered has-text-centered mx-4">
+    <!-- pairings display -->
+    <section class="pairings box my-6 mx-2 column is-half">
       <template x-for="pair in pairings">
         <div>
           <!-- even amount of players -->
@@ -19,11 +20,51 @@
           </template>
         </div>
       </template>
-    </div>
-    {% include 'components/leaderboard.html' %}
+    </section>
+    <!-- leaderboard -->
+    <section
+      x-data="leaderboardHandler(parent.socket, parent)"
+      class="box my-6 mx-2 leaderboard admin column is-half"
+    >
+      <div>
+        <h1 class="title">Leaderboard</h1>
+        <hr />
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Wins</th>
+            <th>Draws</th>
+            <th>Losses</th>
+            <th>ELO</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <template x-for="player in players">
+            <tr>
+              <td><span x-text="player.name"></span></td>
+              <td><span x-text="player.score[0]"></span></td>
+              <td><span x-text="player.score[1]"></span></td>
+              <td><span x-text="player.score[2]"></span></td>
+              <td><span x-text="player.score[3]"></span></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </section>
   </div>
-  <div class="buttons">
-    <button @click="nextRound()" class="button is-primary">Next Round</button>
-    <button @click="endGame()" class="button is-danger">End Game</button>
+  <div class="columns">
+    <div class="column">
+      <div class="buttons are-medium is-centered">
+        <button @click="nextRound()" class="button is-primary table">
+          Next Round
+        </button>
+        <button @click="endGame()" class="button is-danger table">
+          End Game
+        </button>
+      </div>
+    </div>
   </div>
 </section>
