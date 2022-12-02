@@ -74,6 +74,13 @@ html, body {
   width:auto;
 }
 
+@media screen and (max-width: 760px) {
+  .skill-input img {
+    height:4rem;
+    width:auto;
+  }
+}
+
 .skill-input button {
   height:5rem;
   width:5rem;
