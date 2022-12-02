@@ -94,3 +94,22 @@ html, body {
 .tr th {
   font-weight: lighter !important;
 }
+
+.leaderboard .table {
+  background-color: white;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.5em;
+}
+
+.leaderboard h1 {
+  font-style: bold;
+}
+@media screen and (max-width: 760px) {
+  .leaderboard .table {
+    font-size: 0.8em;
+  }
+  .leaderboard h1 {
+    font-size: 1.6em;
+  }
+}

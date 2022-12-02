@@ -1,39 +1,36 @@
 <section x-data="leaderboardHandler(parent.socket, parent)">
-  
-    <div class='columns is-mobile is-centered' style="justify-content: center;">
-   
-      <div class='column is-three-fifths'>
-        <div class="box">
-
-          <div>
-            <h1 class='title' style="font-weight: bold">Leaderboard</h1>
-            <hr>
-          </div>
-          <table class='table is-fullwidth' style="background: white; font-size: 25px;">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Wins</th>
-                <th>Draws</th>
-                <th>Losses</th>
-                <th>ELO</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <template x-for="player in players">
-                <tr>
-                  <td><span x-text="player.name"></span></td>
-                  <td><span x-text="player.score[0]"></span></td>
-                  <td><span x-text="player.score[1]"></span></td>
-                  <td><span x-text="player.score[2]"></span></td>
-                  <td><span x-text="player.score[3]"></span></td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+  <div class="columns is-full-mobile is-two-thirds is-centered" style="justify-content: center">
+    <div class="column">
+      <div class="box my-6 leaderboard">
+        <div>
+          <h1 class="title">Leaderboard</h1>
+          <hr />
         </div>
-      </div>
+        <table
+          class="table"
+        >
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Wins</th>
+              <th>Draws</th>
+              <th>Losses</th>
+              <th>ELO</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <template x-for="player in players">
+              <tr>
+                <td><span x-text="player.name"></span></td>
+                <td><span x-text="player.score[0]"></span></td>
+                <td><span x-text="player.score[1]"></span></td>
+                <td><span x-text="player.score[2]"></span></td>
+                <td><span x-text="player.score[3]"></span></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

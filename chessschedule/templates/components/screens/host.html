@@ -1,36 +1,27 @@
 <section x-data="hostHandler(parent.socket, parent, $router.params.roomUUID)">
-  <div style="min-height: 50rem">
-  </div>
-  <div style="min-height: 50rem">
-    <div class="columns is-centered">
-      <div class="column is-half">
-        <div class="pairings box mx-2">
-          <template x-for="pair in pairings">
-            <div>
-              <!-- even amount of players -->
-              <template x-if="pair.length == 2">
-                <h1 class="pair-tile">
-                  <span x-text="pair[0].name"></span>
-                  <span x-text="pair[1].name"></span>
-                </h1>
-              </template>
-              <!-- uneven amount of players -->
-              <template x-if="pair.length == 1">
-                <h1 class="pair-tile">
-                  <span x-text="pair[0].name"></span>
-                  <span>Bye - Sitout :(</span>
-                </h1>
-              </template>
-            </div>
+  <div class="has-text-centered">
+    <div class="pairings box mx-2" style="width:30rem ;">
+      <template x-for="pair in pairings">
+        <div>
+          <!-- even amount of players -->
+          <template x-if="pair.length == 2">
+            <h1 class="pair-tile">
+              <span x-text="pair[0].name"></span>
+              <span x-text="pair[1].name"></span>
+            </h1>
+          </template>
+          <!-- uneven amount of players -->
+          <template x-if="pair.length == 1">
+            <h1 class="pair-tile">
+              <span x-text="pair[0].name"></span>
+              <span>Bye - Sitout :(</span>
+            </h1>
           </template>
         </div>
-      </div>
+      </template>
     </div>
-    <div class="column is-half">
-        {% include 'components/leaderboard.html' %}
-    </div>
+    {% include 'components/leaderboard.html' %}
   </div>
-
   <div class="buttons">
     <button @click="nextRound()" class="button is-primary">Next Round</button>
     <button @click="endGame()" class="button is-danger">End Game</button>

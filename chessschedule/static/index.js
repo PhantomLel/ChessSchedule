@@ -191,6 +191,11 @@ const gameHandler = (socket, parent, userUUID) => ({
     socket.on("round_results", (data) => {
       this.showLeaderboard = true;
     });
+
+    socket.on("game_ended", (data) => {
+      // go to results page
+      this.$router.push("/results/" + JSON.stringify(data.results));
+    })
   },
   submitGameResult() {
     // close the modal

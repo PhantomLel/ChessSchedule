@@ -16,8 +16,6 @@ def get_room_code(code: str) -> Room:
     for room in rooms:
         if room.room_code == code:
             return room
-    # throw the exception to stop execution
-    raise Exception(f"Unable to find room with code {code}")
     return None
 
 
@@ -26,10 +24,6 @@ def get_room_uuid(uuid: str) -> Room:
     for room in rooms:
         if room.uuid == uuid:
             return room
-    # throw the exception to stop execution
-    raise Exception(
-        f"Unable to find room with value {uuid} - often occurs when server restarts and clients attempt to maintain connectivity to closed server"
-    )
     return None
 
 
@@ -59,7 +53,7 @@ def emit_pairings(room: Room) -> None:
     emit(
         "pairings",
         {"round": room.round, "pairings": pairings},
-        to=room.admin.sid,
+        to=room.admin_sid,
         broadcast=False,
     )
 
@@ -181,7 +175,7 @@ def start_game(data):
     else:
         emit("start_game_res", {"status": 200}, broadcast=False)
 
-    emit_pairings(start_game(room))
+    emit_pairings(room)
 
 
 @skt.on("game_result")
@@ -216,16 +210,16 @@ def game_result(data):
 
 @skt.on("get_leaderboard")
 def get_leaderboard(data):
-    "Socket route that returns leaderboard information"
+    "Socket route that returns leaderboard information. Called by each individual client."
     room = get_room_uuid(data["room_uuid"])
-    emit("leaderboard", room.leaders(10), to=room.uuid, broadcast=False)
+    emit("leaderboard", room.leaders(1000), broadcast=False)
 
 
 @skt.on("next_round")
 def next_round(data):
     "Socket route that starts the next round of games"
     room = get_room_uuid(data["room_uuid"])
-    if room.host_uuid != data["host_uuid"]:
+    if room.admin_uuid != data["host_uuid"]:
         emit("next_round_res", {"status": 502}, broadcast=False)
         return
 
@@ -242,14 +236,14 @@ def next_round(data):
 @skt.on("end_game_host")
 def end_game(data):
     "Socket route that ends the game of a room"
-    room = get_room_uuid(data["uuid"])
-    if data["host_uuid"] != room.host_uuid:
+    room = get_room_uuid(data["room_uuid"])
+    if data["host_uuid"] != room.admin_uuid:
         # the odds of this are vanishlingly infinitesimal
         emit("error", {"status": 502}, broadcast=False)
         return
 
     # send game ended to players
-    emit("game_ended", {"results": room.results}, to=room.uuid, broadcast=True)
+    emit("game_ended", {"results": room.leaders(10)}, to=room.uuid, broadcast=True)
     # send game ended to host
-    emit("game_ended", {"results": room.results}, broadcast=False)
+    emit("game_ended", {"results": room.leaders(10)}, broadcast=False)
     rooms.remove(room)

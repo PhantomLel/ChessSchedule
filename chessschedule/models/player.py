@@ -38,8 +38,6 @@ class Player:
         elif result == "loss":
             self.losses += 1
 
-        # update elo
-        self.rating = new_rating
         # keep track of game as being played
         self.players_played[opponent_uuid] = (
             self.players_played.get(opponent_uuid, 0) + 1
