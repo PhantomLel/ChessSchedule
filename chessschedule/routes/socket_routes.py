@@ -1,4 +1,4 @@
-from ..app import skt
+from ..app import skt, app
 from flask_socketio import emit, send
 from flask_socketio import join_room, leave_room
 from typing import List
@@ -278,6 +278,7 @@ def reconnect_host(data):
         )
         return
     if room.admin_uuid != data["host_uuid"]:
+        app.logger.info(f"ROOM ADMIN UUID: {room.admin_uuid}\n{data['host_uuid']}")
         emit(
             "reconnect_host_res",
             {"status": 500, "error": "Host verification failed"},

@@ -1,6 +1,5 @@
 <section
   x-data="createRoomHandler(socket, parent)"
-  x-init="$nextTick(() => init())"
 >
   <div class="columns is-centered has-text-centered">
     <div class="column">
@@ -11,7 +10,7 @@
       <span class="is-size-2">Join Code</span>
     </div>
   </div>
-  <div class="columns is-multiline is-centered" style="min-height: 30rem;">
+  <div class="columns is-multiline is-centered">
     <template x-for="player in players">
       <div>
         <h1 x-text="player.name" class="player-tile"></h1>
