@@ -33,7 +33,7 @@ class Room:
         "Returns the current game state."
         if not self.started:
             return "wait"
-        if matches_left:
+        if self.matches_left:
             return "pairings"
         return "leaderboard"
 
@@ -72,8 +72,8 @@ class Room:
 
     def get_pairings(self):
         "Returns a list of player-to-player pairings as created by algorithm"
-        self.pairings = pairing.create_pairing(self.players.copy())
-        self.current_pairings = self.pairings
+        self.round_pairings = pairing.create_pairing(self.players.copy())
+        self.current_pairings = self.round_pairings
         self.matches_left = len(self.current_pairings)
         return self.current_pairings
 

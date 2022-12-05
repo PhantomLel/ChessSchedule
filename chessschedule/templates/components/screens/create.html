@@ -10,14 +10,14 @@
       <span class="is-size-2">Join Code</span>
     </div>
   </div>
+  <div class="columns is-centered">
+    <button :disabled="players.length < 2" @click="startGame()" class="button is-primary is-large start-btn">Start Tournament</button>
+  </div>
   <div class="columns is-multiline is-centered">
     <template x-for="player in players">
       <div>
         <h1 x-text="player.name" class="player-tile"></h1>
       </div>
     </template>
-  </div>
-  <div class="columns is-centered">
-    <button :disabled="players.length < 2" @click="startGame()" class="button is-primary is-large start-btn">Start Tournament</button>
   </div>
 </section>
