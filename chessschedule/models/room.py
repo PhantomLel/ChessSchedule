@@ -22,7 +22,7 @@ class Room:
         # the pairings made at the beginning of a round
         self.round_pairings: List[Tuple[dict, dict]]
         # matches that exist at this point in time
-        self.current_pairings: List[Tuple[dict, dict]]
+        self.current_pairings: List[Tuple[dict, dict]] = None
 
         self.claims: List[Claim] = list()
         self.draw_claims: List[str] = list()
@@ -30,12 +30,14 @@ class Room:
         self.started = False
 
     def player_state(self, player_uuid):
-        player = self.get_player_by_uuid(player_uuid)
+        if self.current_pairings is None:
+            return "No Pairings" # game not started
         for pairing in self.current_pairings:
-            if player in pairing:
-                for claim in claims:
-                    if player_uuid in claim:
-                        return "awaiting"
+            print(F"{pairing=}")
+            print(F"{player_uuid=}")
+            if player_uuid in [player['uuid'] for player in pairing]:
+                if player_uuid in [claim.claimer for claim in self.claims]:
+                    return "awaiting"
                 return "inconclusive"
         return "submitted"
 

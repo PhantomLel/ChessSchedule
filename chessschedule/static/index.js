@@ -186,7 +186,17 @@ const gameHandler = (socket, parent, userUUID) => ({
   isBye: false,
   winSelected: null,
   init() {
-    this.$watch("winSelected", (a) => console.log(a));
+    // disconnect handler
+    this.socket.on("disconnect", () => {
+      var interval = setInterval(() => {
+        this.socket.connect();
+        if (this.socket.connected) {
+          this.reconnect();
+          // stop the reconnection
+          clearInterval(interval);
+        }
+      }, 1000);
+    });
     socket.on("pairings", (data) => {
       this.pairings = data.pairings;
       this.gameStarted = true;
@@ -235,6 +245,43 @@ const gameHandler = (socket, parent, userUUID) => ({
       // go to results page
       this.$router.push("/results/" + JSON.stringify(data.results));
     });
+
+    socket.on("get_pairings_res", (data) => {
+      this.pairings = data.pairings;
+    });
+
+    socket.on("reconnect_player_res", (data) => {
+      console.log(data.room_state, data.player_state);
+      switch (data.room_state) {
+        case "wait":
+          break;
+        case "pairing":
+          console.log("Pairings");
+          this.gameStarted = true;
+          this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
+          switch (data.player_state) {
+            case "inconclusive":
+              break;
+            case "awaiting":
+              this.gameSubmitted = true;
+              this.$refs.gameSubmitMsg.innerText =
+                "Game Result Submitted. Waiting for other player.";
+              break;
+            case "submitted":
+              this.$refs.gameSubmitMsg.innerText =
+                "Game Result Has Been Confirmed By Your Opponent";
+              this.gameSubmitted = true;
+              break;
+          }
+          break;
+        case "leaderboard":
+          this.gameStarted = true;
+          this.gameSubmitted = true;
+          this.showLeaderboard = true;
+          break;
+      }
+    });
+    this.reconnect();
   },
   submitGameResult() {
     // close the modal
@@ -257,6 +304,12 @@ const gameHandler = (socket, parent, userUUID) => ({
     this.winSelected = null;
     this.playerPair = null;
   },
+  reconnect() {
+    socket.emit("reconnect_player", {
+      room_uuid: parent.roomUUID,
+      player_uuid: this.$router.params.userUUID,
+    });
+  },
 });
 
 const hostHandler = (socket, parent) => ({
@@ -278,7 +331,7 @@ const hostHandler = (socket, parent) => ({
       this.$router.push("/results/" + JSON.stringify(data.results));
     });
     this.socket.on("reconnect_host_res", (data) => {
-      this.socket.emit("get_pairings", {room_uuid : parent.roomUUID});
+      this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
     });
     this.reconnect();
     // disconnect handler

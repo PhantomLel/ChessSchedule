@@ -291,7 +291,7 @@ def reconnect_player(data):
         )
         return
 
-    room.get_player_by_uuid(data["player_uuid"])
+    player = room.get_player_by_uuid(data["player_uuid"])
     player.sid = request.sid
     join_room(room.uuid)
     emit(
