@@ -101,6 +101,14 @@ def join_comp(data):
             {"error": "No room with the provided code exists"},
             broadcast=False,
         )
+        return
+    if selected_room.started:
+        emit(
+            "join_room_res",
+            {"error": "This game is already in progress"},
+            broadcast=False,
+        )
+        return
 
     # associate request SID with a socket "room"
     join_room(selected_room.uuid)
