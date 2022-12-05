@@ -65,6 +65,14 @@ def connect(data):
     "Initial socket connection route"
     emit("connect_res", {"Status": "Connected"}, broadcast=False)
 
+@skt.on("get_room_state")
+def get_room_state(data):
+    room = get_room_uuid(data["uuid"])
+    if room is None:
+        emit("get_room_state_res", {"status":500, "error" : "No room with provided uuid was found."})
+        return
+    emit("get_room_state_res", {"state":room.state()})
+
 
 @skt.on("check_room")
 def check_room(data):
