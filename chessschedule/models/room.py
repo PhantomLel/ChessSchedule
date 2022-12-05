@@ -150,7 +150,7 @@ class Room:
             if opponent_claim == "draw":
                 # the players draw
                 user.rating, opponent.rating = elo.change_rating(
-                    user.rating, opponent.rating, [0.5, 0.5]
+                    user.rating, opponent.rating, [0.5, 0.5], self.round
                 )
                 user.game_result("draw", opponent.uuid)
                 opponent.game_result("draw", user.uuid)
@@ -174,7 +174,7 @@ class Room:
         if user_claim == "win" and opponent_claim == "loss":
             # update ratings
             user.rating, opponent.rating = elo.change_rating(
-                user.rating, opponent.rating, [1, 0]
+                user.rating, opponent.rating, [1, 0], self.round
             )
             user.game_result("win", opponent.uuid)
             opponent.game_result("loss", user.uuid)
@@ -183,7 +183,7 @@ class Room:
         elif user_claim == "loss" and opponent_claim == "win":
             # update ratings
             user.rating, opponent.rating = elo.change_rating(
-                user.rating, opponent.rating, [0, 1]
+                user.rating, opponent.rating, [0, 1], self.round
             )
             user.game_result("loss", opponent.uuid)
             opponent.game_result("win", user.uuid)
