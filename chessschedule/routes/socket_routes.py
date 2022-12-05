@@ -278,7 +278,7 @@ def end_game(data):
 
 @skt.on("reconnect_player")
 def reconnect_player(data):
-    room = get_room_uuid(data["uuid"])
+    room = get_room_uuid(data["room_uuid"])
     if room is None:
         emit(
             "reconnect_player_res",
