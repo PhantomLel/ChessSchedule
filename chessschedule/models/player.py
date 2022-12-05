@@ -1,6 +1,6 @@
 import uuid
 from ..algos.elo import change_rating
-from flask_socketio import emit, send
+from flask_socketio import emit
 
 
 SKILL_DICT = {1: 100, 2: 250, 3: 500, 4: 700, 5: 900}

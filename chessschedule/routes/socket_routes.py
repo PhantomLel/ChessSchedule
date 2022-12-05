@@ -1,14 +1,12 @@
 from ..app import skt, app
-from flask_socketio import emit, send
+from flask_socketio import emit
 from flask_socketio import join_room, leave_room
 from typing import List
 from ..models.room import Room
 from ..models.player import Player
 from uuid import uuid1
 from flask import request, session
-import json
 import random
-import secrets
 
 # ------------------- large line ------------------
 def get_room_code(code: str) -> Room:
