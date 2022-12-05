@@ -14,14 +14,19 @@ function socketManager() {
       this.roomCode = localStorage.getItem("roomCode");
       this.hostUUID = localStorage.getItem("hostUUID");
       // if uuids change, save them to localstorage
-      this.$watch("roomUUID, userUUID, roomCode", () => this.saveUUIDs());
+      this.$watch("roomUUID, userUUID, roomCode, hostUUID", () => this.saveUUIDs());
+      //
     },
     saveUUIDs() {
       // store in case user becomes disconnected
       localStorage.setItem("roomUUID", this.roomUUID);
-      localStorage.setItem("hostUUID", this.hostUUID);
       localStorage.setItem("roomCode", this.roomCode);
-      localStorage.setItem("userUUID", this.userUUID);
+      if (this.$router.path === "/create") {
+        localStorage.setItem("hostUUID", this.hostUUID);
+      }
+      if (this.$router.path.startsWith("/join") || this.$router.path.startsWith("/game")) {
+        localStorage.setItem("userUUID", this.userUUID);
+      }
     },
     socketBuilder() {
       this.socket = io();
@@ -52,6 +57,22 @@ const createRoomHandler = (socket, parent) => ({
   initialized: false,
   init() {
     console.log("create room handler");
+    // disconnect handler
+    this.socket.on("disconnect", () => {
+      var interval = setInterval(() => {
+        this.socket.connect();
+        if (this.socket.connected) {
+          this.reconnect();
+          // stop the reconnection
+          clearInterval(interval);
+        }
+      }, 1000);
+    });
+    socket.on("reconnect_host_res", (data) => {
+      socket.emit("get_all_players", {
+        room_uuid : parent.roomUUID
+      });
+    });
     socket.on("player_list_update", (data) => {
       this.players = data.players;
     });
@@ -65,7 +86,13 @@ const createRoomHandler = (socket, parent) => ({
     socket.emit("get_all_players", {
       room_uuid: parent.roomUUID,
     }); // init players list
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected");
+    });
     this.playMusic();
+    // get new players and stuff
+    this.reconnect();
   },
   playMusic() {
     this.audio.play();
@@ -73,6 +100,13 @@ const createRoomHandler = (socket, parent) => ({
   startGame() {
     socket.emit("start_game", { host_uuid: parent.hostUUID });
   },
+  reconnect() {
+    console.log("Attempting Reconnect");
+    socket.emit("reconnect_host", {
+      room_uuid : parent.roomUUID,
+      host_uuid : parent.hostUUID
+    });
+  }
 });
 
 const joinRoomHandler = (socket, parent) => ({
@@ -195,7 +229,7 @@ const gameHandler = (socket, parent, userUUID) => ({
     socket.on("game_ended", (data) => {
       // go to results page
       this.$router.push("/results/" + JSON.stringify(data.results));
-    })
+    });
   },
   submitGameResult() {
     // close the modal
@@ -217,14 +251,16 @@ const gameHandler = (socket, parent, userUUID) => ({
     this.gameSubmitted = false;
     this.winSelected = null;
     this.playerPair = null;
-  }
+  },
 });
 
 const hostHandler = (socket, parent) => ({
   pairings: [],
+  leaderboard: leaderboardHandler(socket, parent),
   init() {
     socket.on("pairings", (data) => {
       this.pairings = data.pairings;
+      this.leaderboard.getLeaderboard();
     });
 
     // response to end_game_host
@@ -235,11 +271,12 @@ const hostHandler = (socket, parent) => ({
   },
   nextRound() {
     socket.emit("next_round", {
-      room_uuid : parent.roomUUID,
-      host_uuid : parent.hostUUID,
+      room_uuid: parent.roomUUID,
+      host_uuid: parent.hostUUID,
       // TODO ask the host if they want to do this or not
-      ensure_match_completions : true
+      ensure_match_completions: true,
     });
+    this.leaderboard.getLeaderboard();
   },
   endGame() {
     socket.emit("end_game_host", {
@@ -248,7 +285,6 @@ const hostHandler = (socket, parent) => ({
     });
   },
 });
-
 
 const leaderboardHandler = (socket, parent) => ({
   players: [],
@@ -260,7 +296,7 @@ const leaderboardHandler = (socket, parent) => ({
   },
   getLeaderboard() {
     socket.emit("get_leaderboard", { room_uuid: parent.roomUUID });
-  }
+  },
 });
 
 // DEFAULT BULMA IMPLEMENTATION FOR MODALS - CAN IGNORE
