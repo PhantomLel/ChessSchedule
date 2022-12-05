@@ -18,7 +18,12 @@ class Room:
         self.player_names = set()
         self.round = 1
         self.matches_left = None
+
+        # the pairings made at the beginning of a round
+        self.round_pairings: List[Tuple[dict, dict]]
+        # matches that exist at this point in time
         self.current_pairings: List[Tuple[dict, dict]]
+        
         self.claims: List[Claim] = list()
         self.draw_claims: List[str] = list()
         self.results = list()
@@ -67,7 +72,8 @@ class Room:
 
     def get_pairings(self):
         "Returns a list of player-to-player pairings as created by algorithm"
-        self.current_pairings = pairing.create_pairing(self.players.copy())
+        self.pairings = pairing.create_pairing(self.players.copy())
+        self.current_pairings = self.pairings
         self.matches_left = len(self.current_pairings)
         return self.current_pairings
 

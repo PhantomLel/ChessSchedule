@@ -19,6 +19,11 @@ class Player:
         ] = dict()  # key/value pair is uuid:times_played
         self.sid = sid  # SESSION ID - used for sockets
         self.sitout_num = 0  # number of times a player sat out
+        self.disconnected: bool
+
+    def disconnect():
+        self.disconnected = True
+        
 
     def eval_score(self):
         "Calculates a win/draw/loss record as one float."

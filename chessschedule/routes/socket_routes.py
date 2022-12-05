@@ -79,6 +79,18 @@ def check_room(data):
     emit("check_room_res", output, broadcast=False)
 
 
+@skt.on("get_pairings")
+def get_pairings(data):
+    room = get_room_uuid(data["room_uuid"])
+    if room is None:
+        emit(
+            "error",
+            {status: 500, "error": "No room with provided uuid exists"},
+            broadcast=False
+        )
+    emit("get_pairings_res", {"pairings": room.round_pairings}, broadcast=False)
+    
+
 @skt.on("join_room")
 def join_comp(data):
     "Socket route that enters a player client into a game"
@@ -269,6 +281,7 @@ def reconnect_player(data):
 
 @skt.on("reconnect_host")
 def reconnect_host(data):
+    print(f"Host reconnection attempt: {data}")
     room = get_room_uuid(data["room_uuid"])
     if room is None:
         emit(
