@@ -3,7 +3,7 @@ from ..algos.elo import change_rating
 from flask_socketio import emit
 
 
-SKILL_DICT = {1: 100, 2: 250, 3: 500, 4: 700, 5: 900}
+SKILL_DICT = {1: 300, 2: 350, 3: 400, 4: 450, 5: 500}
 
 
 class Player:

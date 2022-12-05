@@ -15,7 +15,9 @@
       <h1 x-show="isBye" class="is-size-2">Unlucky! Please go spectate the other matches.</h1>
     </div>
     <!-- modal for selection -->
-    {% include "components/win-selection-modal.html" %}
+    <template x-if="!isBye">
+      {% include "components/win-selection-modal.html" %}
+    </template>
     <div class="pairings box mx-2">
       <template x-for="pair in pairings">
         <div>
