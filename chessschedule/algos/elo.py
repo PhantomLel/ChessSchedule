@@ -4,7 +4,9 @@ ELO_COEFFICIENT = 400  # a player with a 400 point advantage over their opponent
 K_FACTOR = 120  # larger number creates a larger change in elo
 
 
-def change_rating(player1_rating, player2_rating, game_result, rounds_played) -> Tuple[int, int]:
+def change_rating(
+    player1_rating, player2_rating, game_result, rounds_played
+) -> Tuple[int, int]:
     """
     change_rating updates the player's rating
     :param player1_rating: the rating of the first player pre-match

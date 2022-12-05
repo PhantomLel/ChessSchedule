@@ -23,7 +23,6 @@ class Player:
 
     def disconnect():
         self.disconnected = True
-        
 
     def eval_score(self):
         "Calculates a win/draw/loss record as one float."

@@ -65,13 +65,17 @@ def connect(data):
     "Initial socket connection route"
     emit("connect_res", {"Status": "Connected"}, broadcast=False)
 
+
 @skt.on("get_room_state")
 def get_room_state(data):
     room = get_room_uuid(data["uuid"])
     if room is None:
-        emit("get_room_state_res", {"status":500, "error" : "No room with provided uuid was found."})
+        emit(
+            "get_room_state_res",
+            {"status": 500, "error": "No room with provided uuid was found."},
+        )
         return
-    emit("get_room_state_res", {"state":room.state()})
+    emit("get_room_state_res", {"state": room.state()})
 
 
 @skt.on("check_room")
@@ -92,10 +96,10 @@ def get_pairings(data):
         emit(
             "error",
             {status: 500, "error": "No room with provided uuid exists"},
-            broadcast=False
+            broadcast=False,
         )
     emit("get_pairings_res", {"pairings": room.round_pairings}, broadcast=False)
-    
+
 
 @skt.on("join_room")
 def join_comp(data):
@@ -290,7 +294,15 @@ def reconnect_player(data):
     room.get_player_by_uuid(data["player_uuid"])
     player.sid = request.sid
     join_room(room.uuid)
-    emit("reconnect_player_res", {"status": 200, "state":room.state()}, broadcast=False)
+    emit(
+        "reconnect_player_res",
+        {
+            "status": 200,
+            "room_state": room.state(),
+            "player_state": room.player_state(data["player_uuid"]),
+        },
+        broadcast=False,
+    )
 
 
 @skt.on("reconnect_host")
@@ -313,4 +325,4 @@ def reconnect_host(data):
         )
         return
     room.admin_sid = request.sid
-    emit("reconnect_host_res", {"status": 200, "state":room.state()}, broadcast=False)
+    emit("reconnect_host_res", {"status": 200, "state": room.state()}, broadcast=False)

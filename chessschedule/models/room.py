@@ -23,11 +23,21 @@ class Room:
         self.round_pairings: List[Tuple[dict, dict]]
         # matches that exist at this point in time
         self.current_pairings: List[Tuple[dict, dict]]
-        
+
         self.claims: List[Claim] = list()
         self.draw_claims: List[str] = list()
         self.results = list()
         self.started = False
+
+    def player_state(self, player_uuid):
+        player = self.get_player_by_uuid(player_uuid)
+        for pairing in self.current_pairings:
+            if player in pairing:
+                for claim in claims:
+                    if player_uuid in claim:
+                        return "awaiting"
+                return "inconclusive"
+        return "submitted"
 
     def state(self):
         "Returns the current game state."
