@@ -193,8 +193,8 @@ def start_game(data):
         emit("start_game_res", {"status": 500}, broadcast=False)
         return
     else:
+        room.started = True
         emit("start_game_res", {"status": 200}, broadcast=False)
-
     emit_pairings(room)
 
 
