@@ -33,8 +33,6 @@ class Room:
         if self.current_pairings is None:
             return "No Pairings" # game not started
         for pairing in self.current_pairings:
-            print(F"{pairing=}")
-            print(F"{player_uuid=}")
             if player_uuid in [player['uuid'] for player in pairing]:
                 if player_uuid in [claim.claimer for claim in self.claims]:
                     return "awaiting"

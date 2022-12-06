@@ -17,7 +17,6 @@ function socketManager() {
       this.$watch("roomUUID, userUUID, roomCode, hostUUID", () =>
         this.saveUUIDs()
       );
-      //
     },
     saveUUIDs() {
       // store in case user becomes disconnected
@@ -202,18 +201,7 @@ const gameHandler = (socket, parent, userUUID) => ({
       this.gameStarted = true;
       // reset to defaults
       this.resetVars();
-      // go through every pair and find the one that is the current player's
-      for (let pair of this.pairings) {
-        parentLoop: for (let player of pair) {
-          if (player.uuid == parent.userUUID) {
-            this.playerPair = pair;
-            if (pair.length == 1) {
-              this.isBye = true;
-            }
-            break parentLoop;
-          }
-        }
-      }
+
       if (this.isBye) {
         this.winSelected = "bye";
         this.submitGameResult();
@@ -248,6 +236,7 @@ const gameHandler = (socket, parent, userUUID) => ({
 
     socket.on("get_pairings_res", (data) => {
       this.pairings = data.pairings;
+      this.gameStarted = true;
     });
 
     socket.on("reconnect_player_res", (data) => {
@@ -255,9 +244,8 @@ const gameHandler = (socket, parent, userUUID) => ({
       switch (data.room_state) {
         case "wait":
           break;
-        case "pairing":
+        case "pairings":
           console.log("Pairings");
-          this.gameStarted = true;
           this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
           switch (data.player_state) {
             case "inconclusive":
@@ -281,6 +269,9 @@ const gameHandler = (socket, parent, userUUID) => ({
           break;
       }
     });
+    // every time pairings changes, get isBye and playerPair
+    this.$watch("pairings", () => this.extractData());
+
     this.reconnect();
   },
   submitGameResult() {
@@ -295,6 +286,25 @@ const gameHandler = (socket, parent, userUUID) => ({
     // change the msg to indicate status
     this.$refs.gameSubmitMsg.innerText =
       "Game Result Submitted. Waiting for other player.";
+  },
+  // gets this.playerPair and this.isBye from this.pairings
+  extractData() {
+    // go through every pair and find the one that is the current player's
+    console.log(this.pairings);
+      // there is a weird bug where the 0th item in pairings is null... so im just going to ignore it for rn
+    // this.pairings = this.pairings.filter(i => i !== null);
+    for (let pair of this.pairings) {
+      parentLoop: 
+      for (let player of pair) {
+        if (player.uuid == parent.userUUID) {
+          this.playerPair = pair;
+          if (pair.length == 1) {
+            this.isBye = true;
+          }
+          break parentLoop;
+        }
+      }
+    }
   },
   // reset all the vars to default
   resetVars() {

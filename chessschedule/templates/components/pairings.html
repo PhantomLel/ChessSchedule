@@ -14,8 +14,8 @@
       <!-- show this message if it is a bye -->
       <h1 x-show="isBye" class="is-size-2">Unlucky! Please go spectate the other matches.</h1>
     </div>
-    <!-- modal for selection -->
-    <template x-if="!isBye">
+    <!-- modal for selection. Only show if its not a bye and there are pairings created -->
+    <template x-if="!isBye && playerPair !== null">
       {% include "components/win-selection-modal.html" %}
     </template>
     <div class="pairings box mx-2">
