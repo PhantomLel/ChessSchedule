@@ -220,6 +220,8 @@ def game_result(data):
 
     if success == "success":
         room.matches_left -= 1
+        # update the host's leaderboard
+        emit("leaderboard", room.leaders(1000), to=room.admin_sid, broadcast=False)
         if room.matches_left <= 0:
             emit(
                 "round_results", {"results": room.results}, to=room.uuid, broadcast=True
