@@ -235,7 +235,6 @@ const gameHandler = (socket, parent, userUUID) => ({
 
     socket.on("get_pairings_res", (data) => {
       this.pairings = data.pairings;
-      this.gameStarted = true;
       this.extractData();
     });
 
@@ -245,8 +244,8 @@ const gameHandler = (socket, parent, userUUID) => ({
         case "wait":
           break;
         case "pairings":
-          console.log("Pairings");
           this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
+          this.gameStarted = true;
           switch (data.player_state) {
             case "inconclusive":
               break;
@@ -256,9 +255,9 @@ const gameHandler = (socket, parent, userUUID) => ({
                 "Game Result Submitted. Waiting for other player.";
               break;
             case "submitted":
+              this.gameSubmitted = true;
               this.$refs.gameSubmitMsg.innerText =
                 "Game Result Has Been Confirmed By Your Opponent";
-              this.gameSubmitted = true;
               break;
           }
           break;
@@ -277,7 +276,7 @@ const gameHandler = (socket, parent, userUUID) => ({
     closeAllModals();
     socket.emit("game_result", {
       room_uuid: parent.roomUUID,
-      player_uuid: parent.userUUID,
+      player_uuid: this.$router.params.userUUID,
       result: this.winSelected, // the winner
     });
     this.gameSubmitted = true;
