@@ -13,7 +13,8 @@ class Room:
         self.uuid = str(uuid1())
         self.admin_uuid = admin_uuid
         self.admin_sid = admin_sid
-        self.room_code = str(randint(1_000_000, 9_999_999))
+        self.room_code = f"{randint(0, 999):03}-{randint(0, 999):03}"
+        print(self.room_code)
         self.players: List[Player] = list()
         self.player_names = set()
         self.round = 1
