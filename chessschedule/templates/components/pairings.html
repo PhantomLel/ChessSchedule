@@ -10,9 +10,15 @@
       >
         Game Completed
       </button>
-      <h1 x-ref="gameSubmitMsg" x-show="gameSubmitted && !isBye" class="is-size-2"></h1>
+      <h1
+        x-ref="gameSubmitMsg"
+        x-show="gameSubmitted && !isBye"
+        class="is-size-2"
+      ></h1>
       <!-- show this message if it is a bye -->
-      <h1 x-show="isBye" class="is-size-2">Unlucky! Please go spectate the other matches.</h1>
+      <h1 x-show="isBye" class="is-size-2">
+        Unlucky! Please go spectate the other matches.
+      </h1>
     </div>
     <!-- modal for selection. Only show if its not a bye and there are pairings created -->
     <template x-if="!isBye && playerPair !== null">
@@ -22,10 +28,10 @@
       <template x-for="pair in pairings">
         <div>
           <!-- even amount of players -->
-          <template x-if="pair.length == 2">
+          <template x-if="pair.length == 2 ">
             <h1
               class="pair-tile"
-              :class="{ 'is-player-pair' : playerPair === pair}"
+              :class="{ 'is-player-pair' : pair == playerPair}"
             >
               <span x-text="pair[0].name"></span>
               <span x-text="pair[1].name"></span>
@@ -35,7 +41,7 @@
           <template x-if="pair.length == 1">
             <h1
               class="pair-tile"
-              :class="{ 'is-player-pair' : playerPair === pair}"
+              :class="{ 'is-player-pair' : playerPair == pair}"
             >
               <span x-text="pair[0].name"></span> <span>Bye - Sitout :(</span>
             </h1>

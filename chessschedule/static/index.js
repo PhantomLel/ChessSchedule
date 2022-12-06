@@ -198,17 +198,16 @@ const gameHandler = (socket, parent, userUUID) => ({
     });
     socket.on("pairings", (data) => {
       this.pairings = data.pairings;
+      this.resetVars();
+      this.extractData();
       this.gameStarted = true;
       // reset to defaults
-      this.resetVars();
 
       if (this.isBye) {
         this.winSelected = "bye";
         this.submitGameResult();
       }
       // remove that pair from the list and add it to the front
-      this.pairings = this.pairings.filter((i) => i !== this.playerPair);
-      this.pairings.unshift(this.playerPair);
       addModalListeners(); // add the closing events such as pressing escape, clicking the close button, or clicking anywhere other than the modal
     });
     socket.on("game_result_res", (data) => {
@@ -237,6 +236,7 @@ const gameHandler = (socket, parent, userUUID) => ({
     socket.on("get_pairings_res", (data) => {
       this.pairings = data.pairings;
       this.gameStarted = true;
+      this.extractData();
     });
 
     socket.on("reconnect_player_res", (data) => {
@@ -269,8 +269,6 @@ const gameHandler = (socket, parent, userUUID) => ({
           break;
       }
     });
-    // every time pairings changes, get isBye and playerPair
-    this.$watch("pairings", () => this.extractData());
 
     this.reconnect();
   },
@@ -290,13 +288,10 @@ const gameHandler = (socket, parent, userUUID) => ({
   // gets this.playerPair and this.isBye from this.pairings
   extractData() {
     // go through every pair and find the one that is the current player's
-    console.log(this.pairings);
-      // there is a weird bug where the 0th item in pairings is null... so im just going to ignore it for rn
-    // this.pairings = this.pairings.filter(i => i !== null);
     for (let pair of this.pairings) {
       parentLoop: 
       for (let player of pair) {
-        if (player.uuid == parent.userUUID) {
+        if (player.uuid == this.$router.params.userUUID) {
           this.playerPair = pair;
           if (pair.length == 1) {
             this.isBye = true;
@@ -305,6 +300,9 @@ const gameHandler = (socket, parent, userUUID) => ({
         }
       }
     }
+    // remove playerPair and add it to beginning of the pairings list
+    // this.pairings = this.pairings.filter((i) => i !== this.playerPair);
+    // this.pairings.unshift(this.playerPair);
   },
   // reset all the vars to default
   resetVars() {

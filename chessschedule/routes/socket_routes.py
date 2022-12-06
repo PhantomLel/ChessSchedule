@@ -286,7 +286,7 @@ def reconnect_player(data):
     if room is None:
         emit(
             "reconnect_player_res",
-            {status: 500, error: "No room with provided code exists"},
+            {"status": 500, "error": "No room with provided code exists"},
             broadcast=False,
         )
         return

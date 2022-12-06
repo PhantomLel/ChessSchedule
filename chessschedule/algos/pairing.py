@@ -1,6 +1,6 @@
 from ..models.player import Player
 from typing import Tuple, List
-import random
+import random, json
 
 
 def create_pairing(players: List[Player]) -> List[Tuple[dict, dict]]:
@@ -33,7 +33,7 @@ def create_pairing(players: List[Player]) -> List[Tuple[dict, dict]]:
     if odd:
         # must first be put in list then changed into tuple for whatever reason i hate life
         pairs.append(tuple([vars(sitout)]))
-    print(pairs)
+    print(json.dumps(pairs))
     return pairs
 
 
