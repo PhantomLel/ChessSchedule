@@ -47,6 +47,7 @@
             class="button"
             :class="skill==1 ? 'is-focused' : null"
             @click="setSkill(1)"
+            x-tooltip.arrowless.raw="Beginner"
           >
             <img src="static/assets/pawn.png" />
           </button>
@@ -54,6 +55,7 @@
             class="button"
             :class="skill==2 ? 'is-focused' : null"
             @click="setSkill(2)"
+            x-tooltip.arrowless.raw="Amateur"
           >
             <img src="static/assets/knight.png" />
           </button>
@@ -61,6 +63,7 @@
             class="button"
             :class="skill==3 ? 'is-focused' : null"
             @click="setSkill(3)"
+            x-tooltip.arrowless.raw="Intermediate"
           >
             <img src="static/assets/bishop.png" />
           </button>
@@ -68,6 +71,7 @@
             class="button"
             :class="skill==4 ? 'is-focused' : null"
             @click="setSkill(4)"
+            x-tooltip.arrowless.raw="Good"
           >
             <img src="static/assets/rook.png" />
           </button>
@@ -75,6 +79,7 @@
             class="button"
             :class="skill==5 ? 'is-focused' : null"
             @click="setSkill(5)"
+            x-tooltip.arrowless.raw="Pro"
           >
             <img src="static/assets/queen.png" />
           </button>

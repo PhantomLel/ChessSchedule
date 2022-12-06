@@ -184,7 +184,7 @@ const gameHandler = (socket, parent, userUUID) => ({
   playerPair: null,
   isBye: false,
   winSelected: null,
-  init() {
+  async init() {
     // disconnect handler
     this.socket.on("disconnect", () => {
       var interval = setInterval(() => {
@@ -238,7 +238,7 @@ const gameHandler = (socket, parent, userUUID) => ({
       this.extractData();
     });
 
-    socket.on("reconnect_player_res", (data) => {
+    socket.on("reconnect_player_res", async (data) => {
       console.log(data.room_state, data.player_state);
       switch (data.room_state) {
         case "wait":
@@ -246,6 +246,8 @@ const gameHandler = (socket, parent, userUUID) => ({
         case "pairings":
           this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
           this.gameStarted = true;
+          // wait for alpine to refresh components
+          await this.$nextTick();
           switch (data.player_state) {
             case "inconclusive":
               break;
