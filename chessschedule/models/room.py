@@ -33,7 +33,10 @@ class Room:
         if self.current_pairings is None:
             return "No Pairings" # game not started
         for pairing in self.current_pairings:
+            print([player['uuid'] for player in pairing])
             if player_uuid in [player['uuid'] for player in pairing]:
+                print(f"FOUND FOUND FOUND 1 {player_uuid}")
+                print([claim.claimer for claim in self.claims])
                 if player_uuid in [claim.claimer for claim in self.claims]:
                     return "awaiting"
                 return "inconclusive"
