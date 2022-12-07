@@ -16,7 +16,7 @@
   <div class="columns is-multiline is-centered">
     <template x-for="player in players">
       <div>
-        <h1 x-text="player.name" class="player-tile"></h1>
+        <h1 x-text="player.name" x-tooltip.placement.right-start="player.rating" class="player-tile"></h1>
       </div>
     </template>
   </div>

@@ -184,7 +184,7 @@ const gameHandler = (socket, parent, userUUID) => ({
   playerPair: null,
   isBye: false,
   winSelected: null,
-  init() {
+  async init() {
     // disconnect handler
     this.socket.on("disconnect", () => {
       var interval = setInterval(() => {
@@ -235,18 +235,19 @@ const gameHandler = (socket, parent, userUUID) => ({
 
     socket.on("get_pairings_res", (data) => {
       this.pairings = data.pairings;
-      this.gameStarted = true;
       this.extractData();
     });
 
-    socket.on("reconnect_player_res", (data) => {
+    socket.on("reconnect_player_res", async (data) => {
       console.log(data.room_state, data.player_state);
       switch (data.room_state) {
         case "wait":
           break;
         case "pairings":
-          console.log("Pairings");
           this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
+          this.gameStarted = true;
+          // wait for alpine to refresh components
+          await this.$nextTick();
           switch (data.player_state) {
             case "inconclusive":
               break;
@@ -256,9 +257,9 @@ const gameHandler = (socket, parent, userUUID) => ({
                 "Game Result Submitted. Waiting for other player.";
               break;
             case "submitted":
+              this.gameSubmitted = true;
               this.$refs.gameSubmitMsg.innerText =
                 "Game Result Has Been Confirmed By Your Opponent";
-              this.gameSubmitted = true;
               break;
           }
           break;
@@ -277,7 +278,7 @@ const gameHandler = (socket, parent, userUUID) => ({
     closeAllModals();
     socket.emit("game_result", {
       room_uuid: parent.roomUUID,
-      player_uuid: parent.userUUID,
+      player_uuid: this.$router.params.userUUID,
       result: this.winSelected, // the winner
     });
     this.gameSubmitted = true;

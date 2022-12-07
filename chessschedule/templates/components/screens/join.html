@@ -9,7 +9,7 @@
         <div class="join-input block">
           <input
             x-model="code"
-            x-mask="9999999"
+            x-mask="999-999"
             class="input is-large"
             placeholder="1234567"
             maxlength="10"
@@ -47,6 +47,7 @@
             class="button"
             :class="skill==1 ? 'is-focused' : null"
             @click="setSkill(1)"
+            x-tooltip.arrowless.raw="Novice"
           >
             <img src="static/assets/pawn.png" />
           </button>
@@ -54,6 +55,7 @@
             class="button"
             :class="skill==2 ? 'is-focused' : null"
             @click="setSkill(2)"
+            x-tooltip.arrowless.raw="Amateur"
           >
             <img src="static/assets/knight.png" />
           </button>
@@ -61,6 +63,7 @@
             class="button"
             :class="skill==3 ? 'is-focused' : null"
             @click="setSkill(3)"
+            x-tooltip.arrowless.raw="Intermediate"
           >
             <img src="static/assets/bishop.png" />
           </button>
@@ -68,6 +71,7 @@
             class="button"
             :class="skill==4 ? 'is-focused' : null"
             @click="setSkill(4)"
+            x-tooltip.arrowless.raw="Advanced"
           >
             <img src="static/assets/rook.png" />
           </button>
@@ -75,6 +79,7 @@
             class="button"
             :class="skill==5 ? 'is-focused' : null"
             @click="setSkill(5)"
+            x-tooltip.arrowless.raw="Master"
           >
             <img src="static/assets/queen.png" />
           </button>
