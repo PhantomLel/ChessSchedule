@@ -30,6 +30,7 @@ class Room:
         self.started = False
 
     def player_state(self, player_uuid):
+        claimers = [claim.claimer for claim in self.claims]
         if self.current_pairings is None:
             return "No Pairings" # game not started
         for pairing in self.current_pairings:
@@ -37,7 +38,8 @@ class Room:
             if player_uuid in [player['uuid'] for player in pairing]:
                 print(f"FOUND FOUND FOUND 1 {player_uuid}")
                 print([claim.claimer for claim in self.claims])
-                if player_uuid in [claim.claimer for claim in self.claims]:
+                if player_uuid not in claimers and \
+                    self.get_opponent_by_uuid(player_uuid).uuid in claimers :
                     return "awaiting"
                 return "inconclusive"
         return "submitted"
@@ -147,6 +149,12 @@ class Room:
             if claim == uuid:
                 self.draw_claims.remove(claim)
 
+    def remove_pairing(self, player_uuid):
+        for pairing in self.current_pairings:
+            if player_uuid in pairing:
+                self.current_pairings.remove(pairing)
+                return
+
     def game_result(self, user_uuid: str, user_claim: str) -> str:
         """
         Function that takes user input of the result of a game (win/lose/draw)
@@ -167,6 +175,7 @@ class Room:
                 )
                 user.game_result("draw", opponent.uuid)
                 opponent.game_result("draw", user.uuid)
+                self.remove_pairing(user_uuid)
                 return "success"
             elif opponent_claim is None:
                 self.draw_claims.append(user_uuid)
@@ -181,6 +190,7 @@ class Room:
 
         if opponent_claim == "bye":
             self.results.append([user.name])
+            self.remove_pairing(user_uuid)
             return "success"
 
         user_claim = "win" if user_claim == user_uuid else "loss"
@@ -192,6 +202,7 @@ class Room:
             user.game_result("win", opponent.uuid)
             opponent.game_result("loss", user.uuid)
             self.results.append([user.name, opponent.name, user.name])
+            self.remove_pairing(user_uuid)
             return "success"
         elif user_claim == "loss" and opponent_claim == "win":
             # update ratings
@@ -201,6 +212,7 @@ class Room:
             user.game_result("loss", opponent.uuid)
             opponent.game_result("win", user.uuid)
             self.results.append([user.name, opponent.name, opponent.name])
+            self.remove_pairing(user_uuid)
             return "success"
         else:
             self.remove_claim(opponent.uuid)
