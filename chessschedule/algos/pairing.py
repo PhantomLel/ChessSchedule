@@ -12,7 +12,7 @@ def create_pairing(players: List[Player]) -> List[Tuple[dict, dict]]:
     if len(players) % 2 != 0:
         players.sort(key=lambda x: x.sitout_num)
         # for testing REMOVE LATER.
-        sitout = random.choice(players)
+        sitout = players[0]
         players.remove(sitout)
         sitout.sitout_num += 1
         odd = True
