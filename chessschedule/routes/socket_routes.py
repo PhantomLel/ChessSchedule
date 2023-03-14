@@ -95,7 +95,7 @@ def get_pairings(data):
     if room is None:
         emit(
             "error",
-            {status: 500, "error": "No room with provided uuid exists"},
+            {"status": 500, "error": "No room with provided uuid exists"},
             broadcast=False,
         )
     emit("get_pairings_res", {"pairings": room.round_pairings}, broadcast=False)
@@ -209,6 +209,24 @@ def start_game(data):
         emit("start_game_res", {"status": 200}, broadcast=False)
     emit_pairings(room)
 
+@skt.on("game_result_admin")
+def game_result(data):
+    room = get_room_uuid(data["room_uuid"])
+    # get both players. First one is winner, 2nd is loser
+    players = [room.get_player_by_uuid(data["uuid1"]), room.get_player_by_uuid(data["uuid2"])]
+    result = data["result"]
+
+    for player in players:
+        success = room.game_result(player.uuid, result)
+
+    if success == "success":
+        room.matches_left -= 1
+        emit("leaderboard", room.leaders(1000), to=room.admin_sid, broadcast=False)
+        emit("game_result_admin_res", {}, to=room.admin_sid, broadcast=False)
+        if room.matches_left <= 0:
+            emit(
+                "round_results", {"results": room.results}, to=room.uuid, broadcast=True
+            )
 
 @skt.on("game_result")
 def game_result(data):

@@ -342,6 +342,7 @@ const hostHandler = (socket, parent) => ({
     this.socket.on("reconnect_host_res", (data) => {
       this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
     });
+    this.socket.on("game_result_admin_res", (data) => console.log("recorded"));
     this.reconnect();
     // disconnect handler
     this.socket.on("disconnect", () => {
@@ -354,6 +355,15 @@ const hostHandler = (socket, parent) => ({
         }
       }, 1000);
     });
+  },
+  sendResult(p1, p2, res) {
+    socket.emit("game_result_admin", {
+      room_uuid : parent.roomUUID,
+      uuid1 : p2,
+      uuid2 : p1,
+      result : res
+    });
+
   },
   nextRound() {
     socket.emit("next_round", {
