@@ -14,7 +14,7 @@
                   <button @click="sendResult(pair[1].uuid, pair[0].uuid, pair[1].uuid)" class="button is-danger is-rounded">Lost</button>
                 </div>
               </div>
-              <button @click="sendResult(pair[1], pair[0], 'draw')" x-show="show" class="button is-dark is-small">Draw</button>
+              <button @click="sendResult(pair[1].uuid, pair[0].uuid, 'draw')" x-show="show" class="button is-dark is-small">Draw</button>
               <div>
                 <span x-text="pair[1].name"></span>
                 <div x-show="show" class="buttons are-small">
@@ -41,6 +41,7 @@
     >
       <div>
         <h1 class="title">Leaderboard</h1>
+        <h2 class="title is-3">Round #<span x-text="round"></span> | <span x-text="isRoundOver ? 'Matches Over' : 'Matches Ongoing'"></h2>
         <hr />
       </div>
       <table class="table">

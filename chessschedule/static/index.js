@@ -323,6 +323,7 @@ const gameHandler = (socket, parent, userUUID) => ({
 
 const hostHandler = (socket, parent) => ({
   pairings: [],
+  isRoundOver : false,
   leaderboard: leaderboardHandler(socket, parent),
   init() {
     socket.on("pairings", (data) => {
@@ -333,6 +334,15 @@ const hostHandler = (socket, parent) => ({
       this.pairings = data.pairings;
       this.leaderboard.getLeaderboard();
     });
+    socket.on("round_results", () => {
+      console.log(this.isRoundOver)
+      this.isRoundOver = true;
+    });
+    socket.on("next_round_res", () => {
+      this.isRoundOver = false;
+      console.log(this.isRoundOver)
+
+    });
 
     // response to end_game_host
     socket.on("game_ended", (data) => {
@@ -342,7 +352,11 @@ const hostHandler = (socket, parent) => ({
     this.socket.on("reconnect_host_res", (data) => {
       this.socket.emit("get_pairings", { room_uuid: parent.roomUUID });
     });
-    this.socket.on("game_result_admin_res", (data) => console.log("recorded"));
+    this.socket.on("game_result_admin_res", (data) => {
+      if (data.status === 400) {
+        alert("Already Submitted.");
+      }
+    });
     this.reconnect();
     // disconnect handler
     this.socket.on("disconnect", () => {
@@ -391,9 +405,11 @@ const hostHandler = (socket, parent) => ({
 
 const leaderboardHandler = (socket, parent) => ({
   players: [],
+  round : 0,
   init() {
     socket.on("leaderboard", (data) => {
       this.players = data.rankings;
+      this.round = data.round;
     });
     this.getLeaderboard();
   },
