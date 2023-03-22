@@ -95,7 +95,7 @@ def get_pairings(data):
     if room is None:
         emit(
             "error",
-            {status: 500, "error": "No room with provided uuid exists"},
+            {"status": 500, "error": "No room with provided uuid exists"},
             broadcast=False,
         )
     emit("get_pairings_res", {"pairings": room.round_pairings}, broadcast=False)
@@ -209,6 +209,30 @@ def start_game(data):
         emit("start_game_res", {"status": 200}, broadcast=False)
     emit_pairings(room)
 
+@skt.on("game_result_admin")
+def game_result(data):
+    room = get_room_uuid(data["room_uuid"])
+    # get both players
+    players = [room.get_player_by_uuid(data["uuid1"])]
+    players.append(room.get_opponent_by_uuid(data["uuid1"]))
+    result = data["result"]
+
+    for player in players:
+        success = room.game_result(player.uuid, result)
+
+    if success == "success":
+        emit("leaderboard", room.leaders(1000))
+        room.matches_left -= 1
+        emit("game_result_admin_res", {"status" : 200})
+        if room.matches_left <= 0:
+            emit(
+                "round_results", {"results": room.results}, to=room.uuid, broadcast=False
+            )
+            emit(
+                "round_results", {"results": room.results})
+    else:
+        emit("game_result_admin_res", {"status" : 400})
+
 
 @skt.on("game_result")
 def game_result(data):
@@ -224,7 +248,7 @@ def game_result(data):
         emit("leaderboard", room.leaders(1000), to=room.admin_sid, broadcast=False)
         if room.matches_left <= 0:
             emit(
-                "round_results", {"results": room.results}, to=room.uuid, broadcast=True
+                "round_results", {"results": room.results}, to=room.uuid, broadcast=False
             )
     if success != "inconclusive":
         emit(
@@ -262,7 +286,7 @@ def next_round(data):
         return
 
     room.reset_round()
-    emit("next_room_res", {"status": 200}, broadcast=False)
+    emit("next_round_res", {"status": 200}, broadcast=False)
     emit_pairings(room)
 
 
