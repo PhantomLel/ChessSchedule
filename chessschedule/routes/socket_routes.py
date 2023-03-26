@@ -8,6 +8,7 @@ from uuid import uuid1
 from flask import request, session
 import random
 
+
 # ------------------- large line ------------------
 def get_room_code(code: str) -> Room:
     "Gets a room with the code provided"
@@ -169,22 +170,10 @@ def create(data):
     player_list_update(room)
 
 
-@skt.on("delete_room")
-def delete_room(data):
-    "Socket route that deletes a room"
-    selected_room = get_room_uuid(data["room_uuid"]) or None
-
-    if not selected_room:
-        emit(
-            "delete_room_res",
-            {"error": "No room with provided UUID exists"},
-            broadcast=False,
-        )
-        return
-
-    if data["user_uuid"] == room.admin_uuid:
-        # tell all clients to leave the room
-        emit("delete_room_res", {"message": "Room closed by admin"}, to=room.uuid)
+@skt.on("room_exists")
+def room_exists(data):
+    "Socket route that checks if a room exists"
+    emit("room_exists", {"exists": get_room_uuid(data["room_uuid"]) is not None})
 
 
 @skt.on("check_name")
@@ -270,6 +259,7 @@ def next_round(data):
 def end_game(data):
     "Socket route that ends the game of a room"
     room = get_room_uuid(data["room_uuid"])
+    print(data["host_uuid"])
     if data["host_uuid"] != room.admin_uuid:
         # the odds of this are vanishlingly infinitesimal
         emit("error", {"status": 502}, broadcast=False)

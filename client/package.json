@@ -20,6 +20,9 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
+    "@svelte-plugins/tooltips": "^0.1.6",
+    "lodash": "^4.17.21",
+    "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
     "svelte-routing": "^1.6.0"
   }

@@ -1,12 +1,35 @@
-import type { Socket } from "socket.io";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+import { writable } from "svelte/store";
 
-let ws = null;
+// create ws connection and export it
+const ws: Socket = io();
+ws.on("connect", () => {
+    console.log("connected");
+});
 
-const initWebsocket = () => {
-    if (ws == null) {
-        ws = io();
-    }
-}
+const roomUUID = writable("");
+const userUUID = writable("");
+const hostUUID = writable("");
+const roomCode = writable("");
 
-export {ws, initWebsocket};
+// get them from local storage on load
+roomUUID.set(localStorage.getItem("roomUUID") || "");
+userUUID.set(localStorage.getItem("userUUID") || "");
+hostUUID.set(localStorage.getItem("hostUUID") || "");
+roomCode.set(localStorage.getItem("roomCode") || "");
+
+// save them all to local storage on change
+roomUUID.subscribe((value) => {
+    localStorage.setItem("roomUUID", value);
+});
+userUUID.subscribe((value) => {
+    localStorage.setItem("userUUID", value);
+});
+hostUUID.subscribe((value) => {
+    localStorage.setItem("hostUUID", value);
+});
+roomCode.subscribe((value) => {
+    localStorage.setItem("roomCode", value);
+});
+
+export {ws, roomUUID, userUUID, hostUUID, roomCode};
