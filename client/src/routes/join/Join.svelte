@@ -1,7 +1,8 @@
-<script lang=ts>
+<script lang ts>
     import Code from "./Code.svelte";
-    import { Route, Router } from "svelte-routing";
+    import { Route, Router} from "svelte-routing";
     import Name from "./Name.svelte";
+    
 </script>
 
 <Router>
@@ -10,6 +11,10 @@
             <div class="container">
                 <Route path="code" component={Code} />
                 <Route path="name" component={Name} />
+                <!-- 404 -->
+                <Route>
+                    {window.location.href = "/join/code"}
+                </Route>
             </div>
         </div>
     </main>

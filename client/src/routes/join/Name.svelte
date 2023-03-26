@@ -2,7 +2,9 @@
     import { onDestroy, onMount } from "svelte";
     import { roomUUID, ws } from "../../ws";
     import { tooltip } from "@svelte-plugins/tooltips";
-    import {debounce} from "lodash";
+    import { debounce } from "lodash";
+    import { Socket } from "socket.io-client";
+    import { navigate } from "svelte-routing";
 
     const BUTTONS = [
         { name: "pawn", tip: "Novice", img: "static/assets/pawn.png" },
@@ -30,10 +32,18 @@
             }
             validName = data.valid;
         });
+        ws.on("join_room_res", (data) => {
+            if (!data.error) {
+                navigate(`/game/${name}/${data.user_uuid}/waiting`);
+                return;
+            }
+            navigate("/join/code");
+        });
     });
 
     onDestroy(() => {
         ws.off("check_name_res");
+        ws.off("join_room_res");
     });
 
     let name = "";
@@ -41,7 +51,7 @@
     let skill: number = null;
     let validName = false;
 
-    const checkName = debounce(() =>{
+    const checkName = debounce(() => {
         ws.emit("check_name", { name: name, room_uuid: $roomUUID });
     }, 500);
 </script>
@@ -78,6 +88,13 @@
 
     <div class="block">
         <button
+            on:click={() => {
+                ws.emit("join_room", {
+                    name: name,
+                    room_uuid: $roomUUID,
+                    skill: skill,
+                });
+            }}
             disabled={name.length < 3 || !validName || skill === null}
             class="mt-4 button is-primary is-large"
         >

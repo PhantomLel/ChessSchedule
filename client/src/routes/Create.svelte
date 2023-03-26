@@ -5,6 +5,7 @@
     import { tooltip } from "@svelte-plugins/tooltips";
 
     let players: { name: string; rating: number }[] = [];
+    let audio = new Audio("static/assets/awesome_music.mp3");
 
     onMount(() => {
         ws.on("create_room_res", (data) => {
@@ -51,6 +52,8 @@
                 room_uuid: $roomUUID,
             });
         }
+
+        audio.play();
     });
 
     onDestroy(() => {
@@ -60,6 +63,8 @@
         ws.off("player_list_update");
         ws.off("room_exists");
         
+        audio.pause();
+
     });
 
     const cancelGame = () => {
@@ -84,7 +89,9 @@
             <br />
             <span class="is-size-2">Join Code</span>
             <br />
-            <button class="button is-primary is-large start-btn"
+            <button
+            disabled={players.length < 2}
+            class="button is-primary is-large start-btn"
                 >Start Tournament</button
             >
             <button
@@ -98,7 +105,7 @@
     <div class="columns is-multiline is-centered">
         {#each players as player}
             <h1 use:tooltip title={player.rating} class="player-tile">
-                {player}
+                {player.name}
             </h1>
         {/each}
     </div>
