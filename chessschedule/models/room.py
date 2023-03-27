@@ -63,7 +63,7 @@ class Room:
 
     def leaders(self, num: int) -> Dict[str, List[Dict]]:
         "Gives a list of the top players and their win/draw/loss record"
-        if num > len(self.players):
+        if num > len(self.players) or num == -1:
             num = len(self.players)
 
         leaders = sorted(self.players, key=lambda x: x.rating, reverse=True)[:num]

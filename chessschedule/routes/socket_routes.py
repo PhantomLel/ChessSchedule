@@ -221,7 +221,7 @@ def game_result(data):
         success = room.game_result(player.uuid, result)
 
     if success == "success":
-        emit("leaderboard", room.leaders(1000))
+        emit("leaderboard", room.leaders(-1))
         room.matches_left -= 1
         emit("game_result_admin_res", {"status" : 200})
         if room.matches_left <= 0:
@@ -245,7 +245,7 @@ def game_result(data):
     if success == "success":
         room.matches_left -= 1
         # update the host's leaderboard
-        emit("leaderboard", room.leaders(1000), to=room.admin_sid, broadcast=False)
+        emit("leaderboard", room.leaders(-1), to=room.admin_sid, broadcast=False)
         if room.matches_left <= 0:
             emit(
                 "round_results", {"results": room.results}, to=room.uuid, broadcast=False
@@ -270,7 +270,7 @@ def game_result(data):
 def get_leaderboard(data):
     "Socket route that returns leaderboard information. Called by each individual client."
     room = get_room_uuid(data["room_uuid"])
-    emit("leaderboard", room.leaders(1000), broadcast=False)
+    emit("leaderboard", room.leaders(-1), broadcast=False)
 
 
 @skt.on("next_round")
