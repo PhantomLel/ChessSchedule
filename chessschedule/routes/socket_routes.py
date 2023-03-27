@@ -305,6 +305,23 @@ def end_game(data):
     emit("game_ended", {"results": room.leaders(10)}, broadcast=False)
     rooms.remove(room)
 
+@skt.on("remove_player")
+def remove_player(data):
+    room = get_room_uuid(data["room_uuid"])
+    if data["host_uuid"] != room.admin_uuid:
+        emit(
+            "remove_player_res",
+            {"status" :500, "error": "Host verification failed"},
+            broadcast=False,
+        )
+    if data["player_uuid"] not in room.players:
+        emit(
+            "remove_player_res",
+            {"status" :500, "error": "No player with provided UUID found"},
+            broadcast=False,
+        )
+        return
+    room.remove_player(data["player_uuid"])
 
 @skt.on("reconnect_player")
 def reconnect_player(data):

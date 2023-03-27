@@ -29,6 +29,10 @@ class Room:
         self.results = list()
         self.started = False
 
+    def remove_player(self, player_uuid):
+        "Removes the player with the provided player_uuid"
+        self.players = [p for p in self.players if p.uuid != player_uuid]
+
     def player_state(self, player_uuid):
         claimers = [claim.claimer for claim in self.claims]
         if self.current_pairings is None:
