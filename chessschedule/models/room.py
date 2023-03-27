@@ -62,7 +62,7 @@ class Room:
         self.round += 1
 
     def leaders(self, num: int) -> Dict[str, List[Dict]]:
-        "Gives a list of the top players and their win/draw/loss record"
+        "Gives a list of the top num number (all if num=-1) players and their win/draw/loss record"
         if num > len(self.players) or num == -1:
             num = len(self.players)
 
