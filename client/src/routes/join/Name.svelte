@@ -34,7 +34,7 @@
         });
         ws.on("join_room_res", (data) => {
             if (!data.error) {
-                navigate(`/game/${name}/${data.user_uuid}/waiting`,{replace: true});
+                navigate(`/game/${name}/${data.user_uuid}/waiting`);
                 return;
             }
             navigate("/join/code");

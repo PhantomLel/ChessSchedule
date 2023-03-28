@@ -2,17 +2,6 @@
   import Code from "./Code.svelte";
   import { Route, Router } from "svelte-routing";
   import Name from "./Name.svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { ws } from "../../ws";
-
-  onMount(() => {
-    ws.on("game_ended", () => {
-        window.location.href = "/join/code";
-    });
-  });
-  onDestroy(() => {
-    ws.off("game_ended");
-  })
 </script>
 
 <Router>

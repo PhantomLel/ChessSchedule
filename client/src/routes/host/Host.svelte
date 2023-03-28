@@ -16,6 +16,11 @@
         room_uuid: $roomUUID,
       });
     });
+    ws.on("game_ended", () => {
+      roomUUID.set("");
+      hostUUID.set("");
+      window.location.href = "/";
+    });
 
     ws.emit("reconnect_host", {
       room_uuid: $roomUUID,
@@ -27,6 +32,14 @@
     ws.off("pairings");
     ws.off("reconnect_host_res");
   });
+
+  const nextRound = () => {
+    ws.emit("next_round", {
+      room_uuid : $roomUUID,
+      host_uuid : $hostUUID,
+      ensure_match_completions : false,
+    });
+  }
 
   const endGame = () => {
     if (!confirm("Are you sure you want to end the game?")) return;
@@ -45,7 +58,7 @@
   <div class="columns">
     <div class="column">
       <div class="buttons are-medium is-centered">
-        <button class="button is-primary table"> Next Round </button>
+        <button on:click={nextRound} class="button is-primary table"> Next Round </button>
         <button on:click={endGame} class="button is-danger table">
           End Game
         </button>
