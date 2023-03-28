@@ -2,6 +2,7 @@
     import { roomUUID, ws } from "../../ws";
     import { onDestroy, onMount } from "svelte";
     import { navigate } from "svelte-routing";
+    import { fly } from "svelte/transition";
     let error = "";
     let code = "";
 
@@ -13,7 +14,7 @@
             } else {
                 roomUUID.set(data.room_uuid);
                 // navigate to name page
-                navigate("/join/name", { replace: true });
+                navigate("/join/name");
             }
         });
     });
@@ -32,24 +33,25 @@
         }
     };
 </script>
-
-<p class="block is-size-2">Enter Join Code</p>
-<div class="join-input block">
-    <form on:submit|preventDefault={checkRoomCode}>
-        <input
-            bind:value={code}
-            class="input is-large"
-            placeholder="123 456"
-            maxlength="14"
-            required
-        />
-    </form>
-</div>
-
-<div class="error-msg">{error}</div>
-
-<div class="block">
-    <button on:click={checkRoomCode} class="mt-4 button is-primary is-large">
-        Join Competition
-    </button>
+<div in:fly={{y: 1000, duration:800}} >
+    <p class="block is-size-2">Enter Join Code</p>
+    <div class="join-input block">
+        <form on:submit|preventDefault={checkRoomCode}>
+            <input
+                bind:value={code}
+                class="input is-large"
+                placeholder="123 456"
+                maxlength="14"
+                required
+            />
+        </form>
+    </div>
+    
+    <div class="error-msg">{error}</div>
+    
+    <div class="block">
+        <button on:click={checkRoomCode} class="mt-4 button is-primary is-large">
+            Join Competition
+        </button>
+    </div>
 </div>

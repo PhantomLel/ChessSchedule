@@ -3,8 +3,8 @@
     import { roomUUID, ws } from "../../ws";
     import { tooltip } from "@svelte-plugins/tooltips";
     import { debounce } from "lodash";
-    import { Socket } from "socket.io-client";
-    import { navigate } from "svelte-routing";
+    import { navigate } from "svelte-routing"; 
+    import {fly} from 'svelte/transition';
 
     const BUTTONS = [
         { name: "pawn", tip: "Novice", img: "static/assets/pawn.png" },
@@ -34,7 +34,7 @@
         });
         ws.on("join_room_res", (data) => {
             if (!data.error) {
-                navigate(`/game/${name}/${data.user_uuid}/waiting`);
+                navigate(`/game/${name}/${data.user_uuid}/waiting`,{replace: true});
                 return;
             }
             navigate("/join/code");
@@ -56,7 +56,8 @@
     }, 500);
 </script>
 
-<main>
+    
+<main in:fly={{duration: 800, y:-800}}>
     <p class="block is-size-2">Enter Your Name</p>
     <div class="join-input block">
         <input
