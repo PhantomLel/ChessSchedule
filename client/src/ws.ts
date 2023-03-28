@@ -2,9 +2,12 @@ import { io, Socket } from "socket.io-client";
 import { writable } from "svelte/store";
 
 // create ws connection and export it
-const ws: Socket = io();
+const ws: Socket = io(window.location.origin, {
+    transports: ['websocket']  // forces websockets only
+  }
+);
 ws.on("connect", () => {
-    console.log("connected");
+  console.log("connected");
 });
 
 const roomUUID = writable("");
@@ -20,16 +23,20 @@ roomCode.set(localStorage.getItem("roomCode") || "");
 
 // save them all to local storage on change
 roomUUID.subscribe((value) => {
-    localStorage.setItem("roomUUID", value);
+  localStorage.setItem("roomUUID", value);
 });
 userUUID.subscribe((value) => {
-    localStorage.setItem("userUUID", value);
+  localStorage.setItem("userUUID", value);
 });
 hostUUID.subscribe((value) => {
-    localStorage.setItem("hostUUID", value);
+  localStorage.setItem("hostUUID", value);
 });
 roomCode.subscribe((value) => {
-    localStorage.setItem("roomCode", value);
+  localStorage.setItem("roomCode", value);
 });
 
-export {ws, roomUUID, userUUID, hostUUID, roomCode};
+export function getLeaderboard() {
+  ws.emit("get_leaderboard", { room_uuid: localStorage.getItem("roomUUID")});
+}
+
+export { ws, roomUUID, userUUID, hostUUID, roomCode };

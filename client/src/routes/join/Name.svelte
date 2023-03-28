@@ -4,7 +4,7 @@
     import { tooltip } from "@svelte-plugins/tooltips";
     import { debounce } from "lodash";
     import { navigate } from "svelte-routing"; 
-    import {fly} from 'svelte/transition';
+    import {fade} from 'svelte/transition';
 
     const BUTTONS = [
         { name: "pawn", tip: "Novice", img: "static/assets/pawn.png" },
@@ -57,7 +57,7 @@
 </script>
 
     
-<main in:fly={{duration: 800, y:-800}}>
+<main in:fade={{delay:100}}>
     <p class="block is-size-2">Enter Your Name</p>
     <div class="join-input block">
         <input
@@ -73,9 +73,9 @@
     <div class="skill-input block">
         {#each BUTTONS as { name, tip, img }, i}
             <button
-                class="button"
+                class="button mx-1"
                 class:is-focused={skill == i}
-                on:click={() => (skill = i)}
+                on:click={() => (skill = i + 1)}
                 use:tooltip
                 title={tip}
             >

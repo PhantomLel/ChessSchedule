@@ -4,6 +4,7 @@
   import Create from "./routes/Create.svelte";
   import Join from "./routes/join/Join.svelte";
   import Game from "./routes/game/Game.svelte";
+  import Host from "./routes/host/Host.svelte";
 
   export let url = "";
 </script>
@@ -15,6 +16,7 @@
     <Game name={params.name} uuid={params.uuid} />
   </Route>
   <Route path="/create" component={Create} />
+  <Route path="/host" component={Host}></Route>
   <!-- 404 -->
   <Route>
     {(window.location.href = "/")}

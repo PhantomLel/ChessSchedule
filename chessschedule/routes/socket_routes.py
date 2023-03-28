@@ -5,7 +5,7 @@ from typing import List
 from ..models.room import Room
 from ..models.player import Player
 from uuid import uuid1
-from flask import request, session
+from flask import request, session, jsonify
 import random
 
 
@@ -99,13 +99,13 @@ def get_pairings(data):
             {status: 500, "error": "No room with provided uuid exists"},
             broadcast=False,
         )
-    emit("get_pairings_res", {"pairings": room.round_pairings}, broadcast=False)
+    emit("pairings", {"round" : room.round, "pairings": room.round_pairings}, broadcast=False)
 
 
 @skt.on("join_room")
 def join_comp(data):
     "Socket route that enters a player client into a game"
-    selected_room = get_room_code(data["code"])
+    selected_room = get_room_uuid(data["room_uuid"])
     if selected_room is None:
         emit(
             "join_room_res",

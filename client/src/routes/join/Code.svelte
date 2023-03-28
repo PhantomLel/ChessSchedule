@@ -2,7 +2,7 @@
     import { roomUUID, ws } from "../../ws";
     import { onDestroy, onMount } from "svelte";
     import { navigate } from "svelte-routing";
-    import { fly } from "svelte/transition";
+    import { fade, fly } from "svelte/transition";
     let error = "";
     let code = "";
 
@@ -33,7 +33,7 @@
         }
     };
 </script>
-<div in:fly={{y: 1000, duration:800}} >
+<div>
     <p class="block is-size-2">Enter Join Code</p>
     <div class="join-input block">
         <form on:submit|preventDefault={checkRoomCode}>

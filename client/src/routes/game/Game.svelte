@@ -10,10 +10,6 @@
     export let name;
 
     onMount(() => {
-        ws.on("game_ended", () => {
-            window.location.href = "/join";
-        });
-
         ws.on("reconnect_player_res", (data) => {
             switch(data.room_state) {
                 case "wait":
@@ -33,12 +29,18 @@
             });
         });
 
+        ws.on("game_ended", () => {
+            window.location.href = "/join/code";
+        });
+
         ws.emit("room_exists", {
             room_uuid: $roomUUID,
         });
+
     });
     onDestroy(() => {
-        ws.off("game_ended");
+        ws.off("reconnect_player_res");
+        ws.off("room_exists");
     });
 </script>
 
@@ -47,10 +49,11 @@
         <div class="hero-body">
             <div class="container">
                 <Route path="waiting">
-                    <h1 in:fly={{ x: 1000, duration: 800 }} class="title is-2">
+                    <h1 in:fly={{ x: 1000, duration: 1000 }} class="title is-2">
                         Hey {name}, waiting for other players to join...
                     </h1>
                 </Route>
+                
             </div>
         </div>
     </main>
