@@ -18,6 +18,9 @@
         case "wait":
           break;
         case "pairings":
+          console.log(
+            "hewaopdwa"
+          )
           ws.emit("get_pairings", {
             room_uuid : $roomUUID
           });

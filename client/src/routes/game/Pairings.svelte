@@ -14,11 +14,12 @@
     for (let pair of pairings) {
       for (let player of pair) {
         if (player.uuid == uuid) {
+          console.log(pair)
           currentPair = pair;
         }
       }
     }
-
+    
     isBye = currentPair.length == 1;
     // put the user's name first in the list
     if (!isBye && currentPair[1].uuid == uuid) {
