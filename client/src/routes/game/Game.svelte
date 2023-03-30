@@ -86,7 +86,7 @@
           </h1>
         </Route>
         <Route path="pairings">
-          <Pairings bind:this={pairingComp} {pairings} {uuid} />
+          <Pairings bind:this={pairingComp} {name} {pairings} {uuid} />
         </Route>
         <Route path="leaderboard" component={Leaderboard}></Route>
       </div>

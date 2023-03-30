@@ -5,6 +5,7 @@
 
   export let uuid: string;
   export let pairings: { name: string; uuid: string }[][] = [];
+  export let name : string;
 
   let currentPair: { name: string; uuid: string }[];
   let isBye = false;
@@ -46,7 +47,7 @@
 
     isBye = currentPair.length == 1;
     // put the user's name first in the list
-    if (!isBye && currentPair[0].uuid == uuid) {
+    if (!isBye && currentPair[0].uuid != uuid) {
       let temp = currentPair[0];
       currentPair[0] = currentPair[1];
       currentPair[1] = temp;
@@ -84,6 +85,7 @@
 
 <div class="columns is-centered is-vcentered">
   <div class="column is-three-fourths">
+    <div in:fly={{x:500}} class="title is-size-3">Good Luck {name}!</div>
     {#if !isBye && currentPair}
       <!-- show the opponent if not submitted yet -->
       {#if !statusMsg}
