@@ -41,7 +41,7 @@
     });
   }
 
-  const endGame = () => {
+  export const endGame = () => {
     if (!confirm("Are you sure you want to end the game?")) return;
     ws.emit("end_game_host", {
       room_uuid: $roomUUID,
@@ -53,7 +53,9 @@
 <main>
   <div class="columns is-centered has-text-centered mx-4">
     <Pairings {pairings} />
-    <Leaderboard />
+    <div class="column is-half">
+      <Leaderboard/>
+    </div>
   </div>
   <div class="columns">
     <div class="column">

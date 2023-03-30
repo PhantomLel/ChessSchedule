@@ -6,6 +6,10 @@
 html, body {
   background: #f5f5f5;
   font-family: 'Poppins', sans-serif !important;
+
+  /* for svelte animations */
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .table th {

@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
     import { roomUUID, ws } from "../../ws";
     import { onDestroy, onMount } from "svelte";
     import { navigate } from "svelte-routing";
     import { fade, fly } from "svelte/transition";
     let error = "";
     let code = "";
-
+    let inp : HTMLInputElement;
     // add ws event listeners in onmount
     onMount(() => {
+        inp.focus();
         ws.on("check_room_res", (data) => {
             if (data.error) {
                 error = data.error;
@@ -39,6 +40,7 @@
         <form on:submit|preventDefault={checkRoomCode}>
             <input
                 bind:value={code}
+                bind:this={inp}
                 class="input is-large"
                 placeholder="123 456"
                 maxlength="14"

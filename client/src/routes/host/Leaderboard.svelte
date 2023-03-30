@@ -1,28 +1,26 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { ws, getLeaderboard } from "../../ws";
+  
 
-  let players: { name: string; score: number[] }[] = [];
   let round: number;
+  let players: { name: string; score: number[] }[] = [];
 
   onMount(() => {
     ws.on("leaderboard", (data) => {
       players = data.rankings;
-    });
-
-    ws.on("pairings", (data) => {
       round = data.round;
     });
+
     getLeaderboard();
   });
 
   onDestroy(() => {
     ws.off("leaderboard");
-    ws.off("pairings")
   });
 </script>
 
-<section class="box my-6 mx-2 leaderboard admin column is-half">
+<section class="box my-6 mx-2 leaderboard admin">
   <div>
     <h1 class="title is-size-2">Leaderboard</h1>
     <h2 class="title is-size-4">Round {round}</h2>
