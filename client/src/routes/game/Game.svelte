@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from "svelte";
   import { navigate, Route, Router } from "svelte-routing";
-  import { ws, roomUUID } from "../../ws";
+  import { ws, roomUUID, userUUID } from "../../ws";
   import { fade, fly } from "svelte/transition";
   import Pairings from "./Pairings.svelte";
   import Leaderboard from "../host/Leaderboard.svelte";
@@ -60,6 +60,15 @@
       navigate(`/game/${name}/${uuid}/leaderboard`, { replace: true });
     });
 
+    // listen if the client has been kicked from the game
+    ws.on("player_removed", (data) => {
+      if (uuid == data.uuid) {
+        alert("You have been kicked from this game. Please try joining again.");
+        roomUUID.set("");
+        navigate("/");
+      }
+    });
+
     ws.on("game_ended", () => {
       window.location.href = "/join/code";
     });
@@ -69,6 +78,7 @@
     ws.off("room_exists");
     ws.off("pairings");
     ws.off("game_ended");
+    ws.off("player_removed")
   });
 
   ws.emit("room_exists", {

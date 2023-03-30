@@ -31,6 +31,7 @@ class Room:
 
     def remove_player(self, player_uuid):
         "Removes the player with the provided player_uuid"
+        self.player_names.remove(self.get_player_by_uuid(player_uuid).name)
         self.players = [p for p in self.players if p.uuid != player_uuid]
 
     def player_state(self, player_uuid):
@@ -96,7 +97,7 @@ class Room:
         self.matches_left = len(self.current_pairings)
         return self.current_pairings
 
-    def get_player_by_uuid(self, user_uuid: str):
+    def get_player_by_uuid(self, user_uuid: str) -> Player:
         "Returns a player with the provided uuid"
         for player in self.players:
             if player.uuid == user_uuid:

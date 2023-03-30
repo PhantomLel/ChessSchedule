@@ -304,7 +304,7 @@ def remove_player(data):
             {"status" :500, "error": "Host verification failed"},
             broadcast=False,
         )
-    if data["player_uuid"] not in room.players:
+    if room.get_player_by_uuid(data["player_uuid"]) is None: 
         emit(
             "remove_player_res",
             {"status" :500, "error": "No player with provided UUID found"},
@@ -312,6 +312,8 @@ def remove_player(data):
         )
         return
     room.remove_player(data["player_uuid"])
+    player_list_update(room)
+    emit("player_removed", {"uuid" : data["player_uuid"]}, to=room.uuid)
 
 @skt.on("reconnect_player")
 def reconnect_player(data):

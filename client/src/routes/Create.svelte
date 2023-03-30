@@ -5,7 +5,7 @@
   import { tooltip } from "@svelte-plugins/tooltips";
   import { navigate } from "svelte-routing";
 
-  let players: { name: string; rating: number }[] = [];
+  let players: { name: string; rating: number; uuid: string }[] = [];
   let audio = new Audio("static/assets/awesome_music.mp3");
 
   onMount(() => {
@@ -86,6 +86,14 @@
       host_uuid: $hostUUID,
     });
   };
+
+  const removePlayer = (uuid) => {
+    ws.emit("remove_player", {
+      room_uuid : $roomUUID,
+      host_uuid : $hostUUID,
+      player_uuid : uuid
+    });
+  }
 </script>
 
 <main class="">
@@ -114,9 +122,13 @@
   </div>
   <div class="columns is-multiline is-centered">
     {#each players as player}
-      <h1 use:tooltip title={player.rating} class="player-tile">
+      <div use:tooltip title={player.rating} class="player-tile">
         {player.name}
-      </h1>
+        <button
+          on:click={() => removePlayer(player.uuid)}
+          class="delete ml-2"
+        />
+      </div>
     {/each}
   </div>
 </main>
