@@ -1,9 +1,5 @@
 #!/bin/bash
 echo "python requirments installing"
 pip install -q -r requirements.txt
-cd chessschedule/static
-echo "npm requirments installing"
-npm install --silent
-cd ../..
 echo "starting server"
 python -m chessschedule
