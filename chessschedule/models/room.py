@@ -67,6 +67,7 @@ class Room:
 
         leaders = sorted(self.players, key=lambda x: x.rating, reverse=True)[:num]
         return {
+            "round" : self.round,
             "rankings": [
                 {"name": p.name, "score": [p.wins, p.draws, p.losses, p.rating]}
                 for p in leaders
