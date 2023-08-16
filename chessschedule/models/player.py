@@ -1,8 +1,9 @@
+from typing import Dict
 import uuid
 from ..algos.elo import change_rating
 from flask_socketio import emit
 
-
+# used for selecting skill level
 SKILL_DICT = {1: 300, 2: 350, 3: 400, 4: 450, 5: 500}
 
 
@@ -21,7 +22,7 @@ class Player:
         self.sitout_num = 0  # number of times a player sat out
         self.disconnected: bool
 
-    def disconnect():
+    def disconnect(self):
         self.disconnected = True
 
     def eval_score(self):

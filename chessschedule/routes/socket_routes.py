@@ -121,6 +121,16 @@ def join_comp(data):
         )
         return
 
+    # check if the name is unique
+    for player in selected_room.players:
+        if player.name == data["name"]:
+            emit(
+                "join_room_res",
+                {"error": "This name is already taken"},
+                broadcast=False,
+            )
+            return
+
     # associate request SID with a socket "room"
     join_room(selected_room.uuid)
 

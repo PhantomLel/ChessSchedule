@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
   import { ws } from "../ws";
   import { roomUUID, hostUUID, roomCode } from "../ws";
   import { tooltip } from "@svelte-plugins/tooltips";
@@ -7,6 +7,9 @@
 
   let players: { name: string; rating: number; uuid: string }[] = [];
   let audio = new Audio("static/assets/awesome_music.mp3");
+  let isModalActive = false;
+
+  let playerStaging: string[] = [""];
 
   onMount(() => {
     ws.on("create_room_res", (data) => {
@@ -74,6 +77,10 @@
     audio.pause();
   });
 
+  const closeModal = () => {
+    isModalActive = false;
+  };
+
   const startGame = () => {
     if (!confirm(`Start game with ${players.length} players?`)) return;
     ws.emit("start_game", { host_uuid: $hostUUID });
@@ -87,16 +94,24 @@
     });
   };
 
-  const removePlayer = (uuid) => {
+  const removePlayer = (uuid: string) => {
     ws.emit("remove_player", {
-      room_uuid : $roomUUID,
-      host_uuid : $hostUUID,
-      player_uuid : uuid
+      room_uuid: $roomUUID,
+      host_uuid: $hostUUID,
+      player_uuid: uuid,
     });
-  }
+  };
+
+  const addPlayer = (name: string) => {
+    ws.emit("join_room", {
+      room_uuid: $roomUUID,
+      name,
+      skill: 3
+    });
+  };
 </script>
 
-<main class="">
+<main>
   <div class="columns is-centered has-text-centered">
     <div class="column">
       <div>
@@ -115,6 +130,12 @@
         class="button is-primary is-large start-btn">Start Tournament</button
       >
       <button
+        on:click={() => (isModalActive = true)}
+        class="button is-info is-large start-btn"
+      >
+        Add Players
+      </button>
+      <button
         on:click={cancelGame}
         class="button is-danger is-outlined is-large start-btn">Cancel</button
       >
@@ -132,3 +153,76 @@
     {/each}
   </div>
 </main>
+
+<div class="modal" class:is-active={isModalActive}>
+  <div class="modal-background" on:keydown={null} on:click={closeModal}></div>
+  <div class="modal-card m-4">
+    <header class="modal-card-head">
+      <p class="modal-card-title">
+        Add Players
+      </p>
+      <button use:tooltip={{position:"bottom", content: "This will add headless players who are unable to connect via a device. You will have to manually enter their results."}} class="button is-info is-rounded mr-4 has-text-weight-bold">?</button>
+      <button class="delete" on:click={closeModal} aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+    {#each playerStaging as inp, i}
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <input
+            bind:value={playerStaging[i]}
+            class="input is-medium"
+            type="text"
+            maxlength=16
+            placeholder="Player Name"
+            on:keydown={async (e) => {
+              // on enter, add a new input and switch focus to it
+              if (e.key === "Enter") {
+                playerStaging = [...playerStaging, ""];
+                await tick();
+                const inputs = document.querySelectorAll("input");
+                inputs[inputs.length - 1].focus();
+              }
+              // opposite on backspace
+              if (e.key == "Backspace" && inp === "" && i !== 0) {
+                playerStaging = playerStaging.filter((_, index) => index !== i);
+                await tick();
+                const inputs = document.querySelectorAll("input");
+                inputs[inputs.length - 1].focus();
+              }
+            }}
+          />
+        </div>
+        <div class="control">
+          <button 
+            on:click={() => {
+              if (playerStaging.length === 1) {
+                playerStaging = [""]; 
+                return;
+              }
+              playerStaging = playerStaging.filter((_, index) => index !== i);
+            }}
+            class="button is-danger is-light is-medium">Remove  </button>
+        </div>
+      </div>
+    {/each}
+    </section>
+    <footer class="modal-card-foot">
+      <button on:click={closeModal} class="button">Cancel</button>
+      <button disabled={
+        playerStaging.length === 0 || 
+        // names must be at least 3 characters long
+        playerStaging.some((p) => p.length < 3) || 
+        // names must be unique 
+        playerStaging.some((p) => players.some((pl) => pl.name === p)) ||
+        // names must be unqiue to each other
+        playerStaging.some((p, i) => playerStaging.some((pl, j) => p === pl && i !== j))
+      } 
+      on:click={() => {
+        playerStaging.forEach((p) => addPlayer(p));
+        playerStaging = [""];
+        closeModal(); 
+      }}
+      class="button is-success">Add</button>
+    </footer>
+  </div>
+</div>

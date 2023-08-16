@@ -98,7 +98,7 @@
         <Route path="pairings">
           <Pairings bind:this={pairingComp} {name} {pairings} {uuid} />
         </Route>
-        <Route path="leaderboard" component={Leaderboard}></Route>
+        <Route path="leaderboard"><Leaderboard/></Route>
       </div>
     </div>
   </main>
